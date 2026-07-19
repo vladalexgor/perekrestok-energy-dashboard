@@ -1,0 +1,15 @@
+# Аудио и видео записей собраний
+*.mp3
+*.mp4
+*.webm
+*.wav
+*.m4a
+*.mov
+*.avi
+
+# Системные файлы Windows
+Thumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store

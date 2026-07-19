@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Бухарестская, 89 · Цифровой двойник</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <style>
+    /* ── Reset ────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ══ СВЕТЛАЯ ТЕМА ════════════════════════════════════ */
+    :root {
+      --bg:         #eef1f8;
+      --surface:    #ffffff;
+      --surface-2:  #e8ecf5;
+      --surface-3:  #dce3f0;
+      --text:       #111827;
+      --muted:      rgba(17,24,39,0.42);
+      --border:     rgba(17,24,39,0.07);
+      --shadow-sm:  0 1px 4px rgba(17,24,39,0.06), 0 2px 10px rgba(17,24,39,0.04);
+      --shadow:     0 2px 8px rgba(17,24,39,0.07), 0 4px 20px rgba(17,24,39,0.05);
+      --shadow-hov: 0 6px 28px rgba(17,24,39,0.13);
+      --radius:     12px;
+      --radius-sm:  8px;
+
+      --brand:      #00963A;
+      --plan:       #4a7fbc;
+      --plan-soft:  #dbeafe;
+      --plan-text:  #1e40af;
+      --positive:   #059669;
+      --pos-soft:   #d1fae5;
+      --pos-text:   #065f46;
+      --negative:   #dc2626;
+      --neg-soft:   #fee2e2;
+      --neg-text:   #991b1b;
+    }
+
+    /* ══ ТЁМНАЯ ТЕМА ════════════════════════════════════ */
+    [data-theme="dark"] {
+      --bg:         #111827;
+      --surface:    #1C2536;
+      --surface-2:  #232D3F;
+      --surface-3:  #2A3548;
+      --text:       #ffffff;
+      --muted:      rgba(255,255,255,0.50);
+      --border:     rgba(255,255,255,0.06);
+      --shadow-sm:  0 1px 4px rgba(0,0,0,0.30);
+      --shadow:     0 4px 20px rgba(0,0,0,0.35);
+      --shadow-hov: 0 8px 32px rgba(0,0,0,0.50);
+
+      --plan:       #6B9FD4;
+      --plan-soft:  rgba(107,159,212,0.15);
+      --plan-text:  #93c5fd;
+      --positive:   #5B9A7B;
+      --pos-soft:   rgba(91,154,123,0.20);
+      --pos-text:   #6ee7b7;
+      --negative:   #D4645C;
+      --neg-soft:   rgba(212,100,92,0.20);
+      --neg-text:   #fca5a5;
+    }
+
+    html { color-scheme: light; }
+    [data-theme="dark"] { color-scheme: dark; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    /* ── TOPBAR ─────────────────────────────────────────── */
+    .topbar {
+      position: sticky; top: 0; z-index: 100;
+      height: 56px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      display: flex; align-items: center;
+      padding: 0 1.5rem; gap: 0.9rem;
+    }
+
+    .tb-logo {
+      width: 34px; height: 34px;
+      background: var(--brand);
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .tb-logo svg { width: 20px; height: 20px; }
+
+    .tb-back {
+      display: flex; align-items: center; gap: 0.4rem;
+      font-size: 0.78rem; font-weight: 500; color: var(--muted);
+      text-decoration: none; cursor: pointer;
+      transition: color 0.15s;
+      flex-shrink: 0;
+    }
+    .tb-back:hover { color: var(--plan); }
+    .tb-back-arrow { font-size: 1rem; }
+
+    .tb-sep { width: 1px; height: 24px; background: var(--border); flex-shrink: 0; }
+
+    .tb-drill {
+      font-size: 0.76rem; font-weight: 600; color: var(--plan);
+      text-decoration: none; flex-shrink: 0;
+      padding: 0.28rem 0.7rem; border: 1px solid var(--plan-soft);
+      border-radius: 6px; background: var(--plan-soft);
+      transition: all 0.15s; white-space: nowrap;
+    }
+    .tb-drill:hover { background: var(--plan); color: #fff; }
+
+    .tb-store { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+    .tb-store-name { font-size: 0.86rem; font-weight: 700; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tb-store-sub  { font-size: 0.62rem; color: var(--muted); }
+
+    .tb-spacer { flex: 1; }
+
+    .btn-grp {
+      display: flex; align-items: center;
+      background: var(--surface-2); border-radius: var(--radius-sm);
+      padding: 3px; gap: 2px;
+    }
+    .btn-grp-btn {
+      font-family: inherit; font-size: 0.77rem; font-weight: 500;
+      padding: 0.28rem 0.85rem;
+      border: none; background: transparent;
+      color: var(--muted); border-radius: 6px;
+      cursor: pointer; transition: all 0.15s ease; white-space: nowrap;
+    }
+    .btn-grp-btn.active {
+      background: var(--surface); color: var(--text);
+      box-shadow: var(--shadow-sm); font-weight: 600;
+    }
+    .btn-grp-btn:hover:not(.active) { color: var(--text); }
+
+    .theme-toggle {
+      background: none; border: 1px solid var(--border); border-radius: 8px;
+      color: var(--muted); cursor: pointer;
+      font-size: 1rem; line-height: 1;
+      width: 34px; height: 34px;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.15s, color 0.15s; flex-shrink: 0;
+    }
+    .theme-toggle:hover { border-color: var(--plan); color: var(--text); }
+
+    /* ── BREADCRUMBS ──────────────────────────────────────── */
+    .breadcrumbs { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 1.5rem; }
+    .bc-inner { max-width: 1280px; margin: 0 auto; height: 34px; display: flex; align-items: center; gap: 0.35rem; }
+    .bc-item { font-size: 0.73rem; font-weight: 500; color: var(--muted); text-decoration: none; transition: color 0.15s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    a.bc-item:hover { color: var(--plan); }
+    .bc-current { color: var(--text); font-weight: 600; }
+    .bc-sep { font-size: 0.73rem; color: var(--muted); user-select: none; flex-shrink: 0; opacity: 0.5; }
+    .bc-home::before { content: '⌂ '; font-size: 0.8rem; }
+
+    /* ── HERO ───────────────────────────────────────────── */
+    .hero {
+      background: linear-gradient(135deg, #3d0c0c 0%, #7a1a1a 45%, #9c2020 100%);
+      padding: 1.75rem 1.5rem 1.6rem;
+      position: relative; overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(ellipse at 80% 50%, rgba(220,38,38,0.20) 0%, transparent 65%);
+    }
+    .hero.savings {
+      background: linear-gradient(135deg, #0c1f3d 0%, #1a3a6e 45%, #1e4a8c 100%);
+    }
+    .hero.savings::after {
+      background: radial-gradient(ellipse at 80% 50%, rgba(74,127,188,0.25) 0%, transparent 65%);
+    }
+    .hero-inner { max-width: 1280px; margin: 0 auto; position: relative; z-index: 1; display: flex; align-items: flex-start; justify-content: space-between; gap: 2rem; flex-wrap: wrap; }
+    .hero-left {}
+    .hero-eyebrow {
+      font-size: 0.63rem; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: rgba(255,255,255,0.45); margin-bottom: 0.35rem;
+    }
+    .hero-title {
+      font-size: 1.55rem; font-weight: 800;
+      color: #fff; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 0.3rem;
+    }
+    .hero-sub { font-size: 0.82rem; color: rgba(255,255,255,0.55); }
+
+    .hero-status {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
+      border-radius: var(--radius-sm);
+      padding: 0.55rem 1rem; color: #fff;
+      backdrop-filter: blur(4px);
+      flex-shrink: 0; align-self: center;
+    }
+    .hero-status-dot { width: 8px; height: 8px; border-radius: 50%; background: #fca5a5; flex-shrink: 0; }
+    .hero-status-label { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(255,255,255,0.65); }
+    .hero-status-value { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.01em; }
+
+    /* ── MAIN ───────────────────────────────────────────── */
+    .main { max-width: 1280px; margin: 0 auto; padding: 1.5rem 1.5rem 3rem; }
+
+    /* ── KPI GRID ───────────────────────────────────────── */
+    .kpi-grid {
+      display: grid; grid-template-columns: repeat(5, 1fr);
+      gap: 1rem; margin-bottom: 1.5rem;
+    }
+    .kpi-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 1.05rem 1.1rem 0.95rem;
+      box-shadow: var(--shadow);
+      animation: fadeUp 0.4s ease both;
+    }
+    .kpi-card:nth-child(1) { animation-delay:   0ms; }
+    .kpi-card:nth-child(2) { animation-delay:  50ms; }
+    .kpi-card:nth-child(3) { animation-delay: 100ms; }
+    .kpi-card:nth-child(4) { animation-delay: 150ms; }
+    .kpi-card:nth-child(5) { animation-delay: 200ms; }
+
+    .kpi-label {
+      font-size: 0.6rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 0.4rem;
+    }
+    .kpi-value {
+      font-size: 1.55rem; font-weight: 800;
+      letter-spacing: -0.02em; line-height: 1; margin-bottom: 0.18rem;
+    }
+    .kpi-value.neg { color: var(--negative); }
+    .kpi-value.pos { color: var(--positive); }
+    .kpi-value.plan-color { color: var(--plan); }
+    .kpi-unit { font-size: 0.68rem; font-weight: 500; color: var(--muted); }
+    .kpi-sub { font-size: 0.68rem; color: var(--muted); margin-top: 0.2rem; }
+
+    /* ── PANEL ──────────────────────────────────────────── */
+    .panel {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      padding: 1.2rem 1.4rem 1.1rem;
+      margin-bottom: 1.25rem;
+      animation: fadeUp 0.4s ease both;
+    }
+    .panel:nth-of-type(1) { animation-delay: 250ms; }
+    .panel:nth-of-type(2) { animation-delay: 300ms; }
+    .panel:nth-of-type(3) { animation-delay: 350ms; }
+
+    .panel-head {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem; margin-bottom: 1.1rem; flex-wrap: wrap;
+    }
+    .panel-title { font-size: 0.9rem; font-weight: 700; }
+    .panel-note  { font-size: 0.7rem; color: var(--muted); margin-top: 0.3rem; }
+
+    /* Tab group — точно как в Галсе */
+    .tab-grp {
+      display: flex; align-items: center;
+      background: var(--surface-2);
+      border-radius: var(--radius-sm);
+      padding: 3px; gap: 2px;
+    }
+    .tab-btn {
+      font-family: inherit; font-size: 0.76rem; font-weight: 500;
+      padding: 0.28rem 0.85rem;
+      border: none; background: transparent;
+      color: var(--muted); border-radius: 6px;
+      cursor: pointer; transition: all 0.15s ease;
+    }
+    .tab-btn.active {
+      background: var(--surface); color: var(--text);
+      box-shadow: var(--shadow-sm); font-weight: 600;
+    }
+    .tab-btn:hover:not(.active) { color: var(--text); }
+
+    /* Legend */
+    .legend {
+      display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap;
+    }
+    .legend-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.75rem; color: var(--muted); }
+    .legend-dot { width: 22px; height: 3px; border-radius: 2px; flex-shrink: 0; }
+
+    /* Chart */
+    .chart-wrap { position: relative; }
+
+    /* Stats row — как в Галсе */
+    .stat-row {
+      display: flex; gap: 2rem; flex-wrap: wrap;
+      padding-top: 0.9rem;
+      border-top: 1px solid var(--border);
+      margin-top: 1rem;
+    }
+    .stat { display: flex; flex-direction: column; gap: 0.18rem; }
+    .stat-label { font-size: 0.6rem; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); }
+    .stat-value { font-size: 0.9rem; font-weight: 700; }
+    .stat-value.neg { color: var(--negative); }
+    .stat-value.pos { color: var(--positive); }
+
+    /* Insight блок */
+    .insight {
+      display: flex; align-items: flex-start; gap: 0.8rem;
+      background: var(--neg-soft); border: 1px solid rgba(220,38,38,0.15);
+      border-radius: var(--radius-sm);
+      padding: 0.85rem 1rem;
+      margin-top: 1rem;
+    }
+    .insight-icon { font-size: 1.1rem; flex-shrink: 0; line-height: 1.4; }
+    .insight-text { font-size: 0.78rem; color: var(--neg-text); line-height: 1.5; }
+    .insight-text strong { font-weight: 700; }
+
+    /* ── FOOTER ─────────────────────────────────────────── */
+    footer {
+      text-align: center; padding: 1.5rem;
+      font-size: 0.68rem; color: var(--muted);
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    /* ── Animations ─────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Responsive ─────────────────────────────────────── */
+    @media (max-width: 1100px) { .kpi-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 700px)  {
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .tb-store-name { max-width: 160px; }
+    }
+    @media (max-width: 460px)  { .kpi-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<!-- ── TOPBAR ─────────────────────────────────────────────── -->
+<header class="topbar">
+  <div class="tb-logo">
+    <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M3 10h14M10 3v14" stroke="white" stroke-width="2.4" stroke-linecap="round"/>
+      <circle cx="10" cy="10" r="3" fill="white" fill-opacity="0.22"/>
+    </svg>
+  </div>
+
+  <a class="tb-back" href="level1.html">
+    <span class="tb-back-arrow">←</span>
+    Все объекты
+  </a>
+
+  <div class="tb-sep"></div>
+
+  <div class="tb-store">
+    <div class="tb-store-name" id="tbStoreName">ул. Бухарестская, 89</div>
+    <div class="tb-store-sub" id="tbStoreSub">Санкт-Петербург · Супермаркет · 2 300 м²</div>
+  </div>
+
+  <div class="tb-spacer"></div>
+
+  <a class="tb-drill" id="drillLink" href="level3.html" title="Детализация по часам">
+    Почасовая детализация →
+  </a>
+
+  <div class="btn-grp" id="unitToggle">
+    <button class="btn-grp-btn active" data-unit="rub" onclick="setUnit('rub')">₽</button>
+    <button class="btn-grp-btn"        data-unit="kwh" onclick="setUnit('kwh')">кВт·ч</button>
+  </div>
+
+  <button class="theme-toggle" id="themeToggle" title="Переключить тему">
+    <span id="themeIcon">🌙</span>
+  </button>
+</header>
+
+<!-- ── BREADCRUMBS ──────────────────────────────────────────── -->
+<nav class="breadcrumbs" aria-label="Навигация">
+  <div class="bc-inner">
+    <a href="level1.html" class="bc-item bc-home">Все объекты</a>
+    <span class="bc-sep">›</span>
+    <span class="bc-item bc-current" id="bcStoreName">—</span>
+  </div>
+</nav>
+
+<!-- ── HERO ───────────────────────────────────────────────── -->
+<section class="hero" id="heroSection">
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-eyebrow">Объект пилотной группы · 2025</div>
+      <div class="hero-title" id="heroTitle">ул. Бухарестская, 89</div>
+      <div class="hero-sub" id="heroSub">Санкт-Петербург · Супермаркет · 2 300 м²</div>
+    </div>
+    <div class="hero-status">
+      <div class="hero-status-dot" id="heroStatusDot"></div>
+      <div>
+        <div class="hero-status-label">Отклонение от двойника</div>
+        <div class="hero-status-value" id="heroStatusValue">+22,1% ПЕРЕРАСХОД</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── MAIN ───────────────────────────────────────────────── -->
+<main class="main">
+
+  <!-- KPI Strip -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Факт за год</div>
+      <div class="kpi-value neg" id="kFact">—</div>
+      <div class="kpi-unit" id="kFactUnit">—</div>
+      <div class="kpi-sub" id="kFactSub">—</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">План (двойник)</div>
+      <div class="kpi-value plan-color" id="kPlan">—</div>
+      <div class="kpi-unit" id="kPlanUnit">—</div>
+      <div class="kpi-sub" id="kPlanSub">—</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Отклонение</div>
+      <div class="kpi-value neg" id="kDeltaPct">+22,1%</div>
+      <div class="kpi-sub" id="kDeltaSub">факт превышает план</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Перерасход</div>
+      <div class="kpi-value neg" id="kOver">—</div>
+      <div class="kpi-unit" id="kOverUnit">—</div>
+      <div class="kpi-sub">сверх эталона двойника</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">ЭПИ факт / план</div>
+      <div class="kpi-value neg" id="kEuiFact">610</div>
+      <div class="kpi-unit">кВт·ч/м²</div>
+      <div class="kpi-sub" id="kEuiSub">план двойника: 500 кВт·ч/м²</div>
+    </div>
+  </div>
+
+  <!-- ── PANEL 1: ФАКТ vs ДВОЙНИК ──────────────────────── -->
+  <div class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-title">Факт vs Двойник</div>
+        <div class="panel-note">Помесячное сравнение фактического потребления с эталоном цифрового двойника</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+        <div class="legend">
+          <div class="legend-item">
+            <div class="legend-dot" style="background:var(--negative);opacity:0.75"></div>
+            Факт
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background:var(--plan);height:2px"></div>
+            Двойник (план)
+          </div>
+        </div>
+        <div class="tab-grp" id="fvpTabs">
+          <button class="tab-btn active" data-tab="elec" onclick="setFvpTab('elec')">Электричество</button>
+          <button class="tab-btn"        data-tab="heat" onclick="setFvpTab('heat')">Тепло</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-wrap" style="height:280px">
+      <canvas id="chartFvp"></canvas>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <span class="stat-label">Факт за год</span>
+        <span class="stat-value neg" id="stFact">—</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Двойник (план)</span>
+        <span class="stat-value" id="stPlan">—</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Отклонение</span>
+        <span class="stat-value neg" id="stDelta">—</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Пиковый месяц</span>
+        <span class="stat-value" id="stPeak">—</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Наибольший перерасход</span>
+        <span class="stat-value neg" id="stWorst">—</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PANEL 2: ОТКЛОНЕНИЕ ПО МЕСЯЦАМ ────────────────── -->
+  <div class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-title">Отклонение по месяцам</div>
+        <div class="panel-note">Процент превышения факта над планом двойника для каждого месяца</div>
+      </div>
+      <div class="tab-grp" id="devTabs">
+        <button class="tab-btn active" data-tab="elec" onclick="setDevTab('elec')">Электричество</button>
+        <button class="tab-btn"        data-tab="heat" onclick="setDevTab('heat')">Тепло</button>
+      </div>
+    </div>
+
+    <div class="chart-wrap" style="height:220px">
+      <canvas id="chartDev"></canvas>
+    </div>
+
+    <div class="insight" id="insightBox">
+      <span class="insight-icon">⚠</span>
+      <span class="insight-text" id="insightText">—</span>
+    </div>
+  </div>
+
+  <!-- ── PANEL 3: ЭПИ vs БЕНЧМАРК ─────────────────────── -->
+  <div class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-title">Удельное потребление (ЭПИ)</div>
+        <div class="panel-note">кВт·ч на м² в год — сравнение с эталоном двойника и ориентирами рынка</div>
+      </div>
+    </div>
+
+    <div class="chart-wrap" style="height:180px">
+      <canvas id="chartEui"></canvas>
+    </div>
+
+    <div class="stat-row" style="margin-top:0.9rem">
+      <div class="stat">
+        <span class="stat-label">ЭПИ факт</span>
+        <span class="stat-value neg" id="euiFactStat">610 кВт·ч/м²</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">ЭПИ двойник</span>
+        <span class="stat-value plan-color" style="color:var(--plan)" id="euiPlanStat">500 кВт·ч/м²</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Разница</span>
+        <span class="stat-value neg" id="euiDiffStat">+110 кВт·ч/м²</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Ориентир рынка (ретейл)</span>
+        <span class="stat-value">520 кВт·ч/м²</span>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  Перекрёсток · Цифровой энергетический двойник · Пилотная версия 2025
+</footer>
+
+<!-- ════════════════════════════════════════════════════════
+     SCRIPT
+════════════════════════════════════════════════════════ -->
+<script>
+const MONTHS = ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
+const TARIFF_ELEC = 6.12;  // ₽/кВт·ч
+const TARIFF_HEAT = 2.50;  // ₽/кВт·ч (теплоснабжение)
+
+/* ── База данных всех магазинов (совпадает с level1.html) ── */
+const STORES_DB = [
+  { id:  1, name: 'Большевиков, 9',            city: 'Санкт-Петербург', type: 'Гипермаркет', area: 4200, plan: 2100000, delta:  12.3 },
+  { id:  2, name: 'Ленинский пр., 114',         city: 'Санкт-Петербург', type: 'Супермаркет', area: 1800, plan:  900000, delta:  -4.7 },
+  { id:  3, name: 'Комендантский пр., 7',       city: 'Санкт-Петербург', type: 'Супермаркет', area: 1600, plan:  820000, delta:   8.1 },
+  { id:  4, name: 'Пулковское ш., 40к2',        city: 'Санкт-Петербург', type: 'Гипермаркет', area: 5100, plan: 2550000, delta:  -2.9 },
+  { id:  5, name: 'ул. Типанова, 27',           city: 'Санкт-Петербург', type: 'Супермаркет', area: 2100, plan: 1050000, delta:  17.8 },
+  { id:  6, name: 'пр. Просвещения, 31',        city: 'Санкт-Петербург', type: 'Супермаркет', area: 1400, plan:  700000, delta:  -1.5 },
+  { id:  7, name: 'ул. Ленина, 52',             city: 'Пушкин (СПб)',    type: 'Супермаркет', area: 1200, plan:  600000, delta:   6.4 },
+  { id:  8, name: 'Московский пр., 212',        city: 'Санкт-Петербург', type: 'Гипермаркет', area: 4800, plan: 2400000, delta:  -8.6 },
+  { id:  9, name: 'ул. Бухарестская, 89',       city: 'Санкт-Петербург', type: 'Супермаркет', area: 2300, plan: 1150000, delta:  22.1 },
+  { id: 10, name: 'Придорожная аллея, 17',      city: 'Санкт-Петербург', type: 'Супермаркет', area: 1550, plan:  775000, delta:  -0.8 },
+  { id: 11, name: 'Новинский б-р, 31',          city: 'Москва',          type: 'Супермаркет', area: 1700, plan:  850000, delta:  -6.9 },
+  { id: 12, name: 'Варшавское ш., 87',          city: 'Москва',          type: 'Гипермаркет', area: 4500, plan: 2250000, delta:  13.7 },
+  { id: 13, name: 'ул. Маршала Жукова, 4',      city: 'Москва',          type: 'Супермаркет', area: 1900, plan:  950000, delta:  -3.8 },
+  { id: 14, name: 'Дмитровское ш., 98',         city: 'Москва',          type: 'Гипермаркет', area: 3800, plan: 1900000, delta:   9.2 },
+  { id: 15, name: 'ул. Ставропольская, 84',     city: 'Москва',          type: 'Супермаркет', area: 1300, plan:  650000, delta:  -5.4 },
+  { id: 16, name: 'пр. Вернадского, 37',        city: 'Москва',          type: 'Супермаркет', area: 2200, plan: 1100000, delta:   3.1 },
+  { id: 17, name: 'Борисовские пруды, 14',      city: 'Москва',          type: 'Супермаркет', area: 1450, plan:  725000, delta: -11.8 },
+  { id: 18, name: 'Ярославское ш., 116',        city: 'Москва',          type: 'Гипермаркет', area: 4200, plan: 2100000, delta:  -2.1 },
+  { id: 19, name: 'пр. Победы, 29',             city: 'Казань',          type: 'Гипермаркет', area: 3600, plan: 1800000, delta:   7.3 },
+  { id: 20, name: 'ул. Чистопольская, 20',      city: 'Казань',          type: 'Супермаркет', area: 1100, plan:  550000, delta:  -8.2 },
+  { id: 21, name: 'ул. Родионова, 187',         city: 'Нижний Новгород', type: 'Гипермаркет', area: 4100, plan: 2050000, delta:  11.4 },
+  { id: 22, name: 'пр. Ленина, 15',             city: 'Нижний Новгород', type: 'Супермаркет', area: 1600, plan:  800000, delta:  -3.2 },
+  { id: 23, name: 'ул. Репина, 94',             city: 'Екатеринбург',    type: 'Гипермаркет', area: 4700, plan: 2350000, delta: -15.1 },
+  { id: 24, name: 'ул. 8 Марта, 153',           city: 'Екатеринбург',    type: 'Супермаркет', area: 1800, plan:  900000, delta:   5.2 },
+  { id: 25, name: 'Московское ш., 15',          city: 'Самара',          type: 'Гипермаркет', area: 3900, plan: 1950000, delta:  18.9 },
+  { id: 26, name: 'ул. Ново-Садовая, 106',      city: 'Самара',          type: 'Супермаркет', area: 1350, plan:  675000, delta:  -4.1 },
+  { id: 27, name: 'Ленинский пр., 153',         city: 'Воронеж',         type: 'Гипермаркет', area: 3200, plan: 1600000, delta:  -7.3 },
+  { id: 28, name: 'ул. Хользунова, 35',         city: 'Воронеж',         type: 'Супермаркет', area: 1250, plan:  625000, delta:  12.8 },
+  { id: 29, name: 'ул. Красных Партизан, 212',  city: 'Краснодар',       type: 'Гипермаркет', area: 4400, plan: 2200000, delta:  -1.8 },
+  { id: 30, name: 'ул. Дзержинского, 100',      city: 'Краснодар',       type: 'Супермаркет', area: 1650, plan:  825000, delta:   4.0 },
+];
+
+/* ── Сезонные веса (нормированы к 1) ──────────────────── */
+// Электричество: зима и лето чуть выше (освещение + охлаждение)
+const W_ELEC = [0.1105,0.0979,0.0863,0.0737,0.0684,0.0663,0.0716,0.0684,0.0758,0.0863,0.1011,0.0937];
+// Тепло: только холодный сезон
+const W_HEAT_RAW = [42,38,25,12,3,0,0,0,0,10,28,42];
+const W_HEAT_SUM = W_HEAT_RAW.reduce((a,b)=>a+b,0);
+const W_HEAT = W_HEAT_RAW.map(v => v / W_HEAT_SUM);
+
+/* ── Генерация помесячных данных для любого магазина ───── */
+function generateStoreData(store) {
+  // ~82% электричество, ~18% тепло от суммарного плана
+  const annElec = Math.round(store.plan * 0.82);
+  const annHeat = Math.round(store.plan * 0.18);
+
+  const elecPlan = W_ELEC.map(w => Math.round(annElec * w));
+  const heatPlan = W_HEAT.map(w => Math.round(annHeat * w));
+
+  // Детерминированная «случайность» на основе id магазина
+  const rng = i => (Math.sin(store.id * 127.1 + i * 37.3) * 0.5 + 0.5);
+  const variation = i => (rng(i) - 0.5) * 0.08;  // ±4% на месяц
+
+  const factor = 1 + store.delta / 100;
+  const elecFact = elecPlan.map((v, i) => Math.round(v * (factor + variation(i))));
+  const heatFact = heatPlan.map((v, i) => v === 0 ? 0 : Math.round(v * (factor + variation(i + 12))));
+
+  return {
+    elec: { plan: elecPlan, fact: elecFact },
+    heat: { plan: heatPlan, fact: heatFact },
+  };
+}
+
+/* ── Текущий объект (заполняется в initStore) ──────────── */
+let STORE = null;
+let AREA  = 2300;
+let DATA  = null;
+
+/* ── Цветовой объект для Chart.js (перестраивается по теме) */
+const C = {};
+
+function updateColors() {
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  C.fact        = dark ? 'rgba(212,100,92,0.75)' : 'rgba(220,38,38,0.62)';
+  C.factBorder  = dark ? '#D4645C' : '#dc2626';
+  C.plan        = dark ? '#6B9FD4' : '#4a7fbc';
+  C.positive    = dark ? '#5B9A7B' : '#059669';
+  C.negative    = dark ? '#D4645C' : '#dc2626';
+  C.grid        = dark ? 'rgba(255,255,255,0.05)' : 'rgba(17,24,39,0.07)';
+  C.tick        = dark ? 'rgba(255,255,255,0.40)' : 'rgba(17,24,39,0.50)';
+  C.tooltip     = dark ? '#232D3F' : '#ffffff';
+  C.tooltipBdr  = dark ? 'rgba(255,255,255,0.10)' : 'rgba(17,24,39,0.12)';
+
+  Chart.defaults.color = C.tick;
+  Chart.defaults.font.family = "'Inter', sans-serif";
+  Chart.defaults.font.size   = 12;
+}
+
+/* ── State ─────────────────────────────────────────────── */
+let unit   = 'rub';
+let fvpTab = 'elec';
+let devTab = 'elec';
+
+let chartFvp = null;
+let chartDev = null;
+let chartEui = null;
+
+/* ── Theme (как в Галсе) ──────────────────────────────── */
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  document.documentElement.style.colorScheme = theme;
+  try { localStorage.setItem('pk-theme', theme); } catch (_) {}
+  document.getElementById('themeIcon').textContent = theme === 'light' ? '🌙' : '☀';
+  updateColors();
+  renderAll();
+}
+
+function initTheme() {
+  const saved = (() => { try { return localStorage.getItem('pk-theme'); } catch (_) { return null; } })();
+  const theme = saved === 'dark' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', theme);
+  document.documentElement.style.colorScheme = theme;
+  document.getElementById('themeIcon').textContent = theme === 'light' ? '🌙' : '☀';
+  updateColors();
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    applyTheme(next);
+  });
+}
+
+/* ── initStore: читает ?id= и заполняет DOM ─────────── */
+function initStore() {
+  const params = new URLSearchParams(window.location.search);
+  const id = parseInt(params.get('id') || '9', 10);
+  STORE = STORES_DB.find(s => s.id === id) || STORES_DB[8]; // fallback id=9
+  AREA  = STORE.area;
+  DATA  = generateStoreData(STORE);
+
+  const over     = STORE.delta > 0;
+  const absDelta = Math.abs(STORE.delta).toFixed(1).replace('.', ',');
+  const sign     = over ? '+' : '−';
+  const sub      = `${STORE.city} · ${STORE.type} · ${STORE.area.toLocaleString('ru-RU')} м²`;
+
+  document.title = `${STORE.name} · Цифровой двойник`;
+  document.getElementById('drillLink').href = `level3.html?id=${STORE.id}`;
+  document.getElementById('bcStoreName').textContent = STORE.name;
+  document.getElementById('tbStoreName').textContent      = STORE.name;
+  document.getElementById('tbStoreSub').textContent       = sub;
+  document.getElementById('heroTitle').textContent        = STORE.name;
+  document.getElementById('heroSub').textContent          = sub;
+  document.getElementById('heroStatusValue').textContent  =
+    `${sign}${absDelta}% ${over ? 'ПЕРЕРАСХОД' : 'ЭКОНОМИЯ'}`;
+  document.getElementById('heroStatusDot').style.background = over ? '#fca5a5' : '#6ee7b7';
+  document.getElementById('heroSection').classList.toggle('savings', !over);
+
+  const kDelta = document.getElementById('kDeltaPct');
+  kDelta.textContent = `${sign}${absDelta}%`;
+  kDelta.className   = `kpi-value ${over ? 'neg' : 'pos'}`;
+  document.getElementById('kDeltaSub').textContent =
+    over ? 'факт превышает план' : 'факт ниже плана (экономия)';
+}
+
+/* ── Init ──────────────────────────────────────────────── */
+window.addEventListener('DOMContentLoaded', () => {
+  initStore();   // ← первым: задаёт DATA и AREA
+  initTheme();
+  updateKPIs();
+  renderAll();
+});
+
+/* ── Unit toggle ───────────────────────────────────────── */
+function setUnit(u) {
+  unit = u;
+  document.querySelectorAll('[data-unit]').forEach(btn =>
+    btn.classList.toggle('active', btn.dataset.unit === u));
+  updateKPIs();
+  renderFvp();
+}
+
+/* ── Tab switches ──────────────────────────────────────── */
+function setFvpTab(t) {
+  fvpTab = t;
+  document.querySelectorAll('#fvpTabs .tab-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.tab === t));
+  renderFvp();
+}
+function setDevTab(t) {
+  devTab = t;
+  document.querySelectorAll('#devTabs .tab-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.tab === t));
+  renderDev();
+}
+
+/* ── Helpers ───────────────────────────────────────────── */
+const sum = arr => arr.reduce((a, b) => a + b, 0);
+
+function toRub(arr, resource) {
+  const t = resource === 'heat' ? TARIFF_HEAT : TARIFF_ELEC;
+  return arr.map(v => Math.round(v * t));
+}
+
+function fmtMln(v) {
+  const a = Math.abs(v);
+  if (a >= 1e9) return (v/1e9).toFixed(1).replace('.',',') + ' млрд';
+  if (a >= 1e6) return (v/1e6).toFixed(1).replace('.',',') + ' млн';
+  if (a >= 1e3) return Math.round(v/1e3) + ' тыс.';
+  return v.toLocaleString('ru-RU');
+}
+function fmtK(v) {
+  if (Math.abs(v) >= 1e6) return (v/1e6).toFixed(1) + 'M';
+  if (Math.abs(v) >= 1e3) return Math.round(v/1e3) + 'K';
+  return v;
+}
+
+/* ── KPI Update ─────────────────────────────────────────── */
+function updateKPIs() {
+  const elecFact = sum(DATA.elec.fact);
+  const elecPlan = sum(DATA.elec.plan);
+  const heatFact = sum(DATA.heat.fact);
+  const heatPlan = sum(DATA.heat.plan);
+
+  const totalFact = elecFact + heatFact;
+  const totalPlan = elecPlan + heatPlan;
+  const over      = totalFact - totalPlan;
+
+  const factRub = Math.round(elecFact * TARIFF_ELEC + heatFact * TARIFF_HEAT);
+  const planRub = Math.round(elecPlan * TARIFF_ELEC + heatPlan * TARIFF_HEAT);
+  const overRub = factRub - planRub;
+
+  const sfx = unit === 'rub' ? '₽' : 'кВт·ч';
+
+  document.getElementById('kFact').textContent    = unit === 'rub' ? fmtMln(factRub) : fmtMln(totalFact);
+  document.getElementById('kFactUnit').textContent = sfx;
+  document.getElementById('kFactSub').textContent  = unit === 'rub' ? fmtMln(totalFact) + ' кВт·ч' : fmtMln(factRub) + ' ₽';
+
+  document.getElementById('kPlan').textContent    = unit === 'rub' ? fmtMln(planRub) : fmtMln(totalPlan);
+  document.getElementById('kPlanUnit').textContent = sfx;
+  document.getElementById('kPlanSub').textContent  = unit === 'rub' ? fmtMln(totalPlan) + ' кВт·ч' : fmtMln(planRub) + ' ₽';
+
+  document.getElementById('kOver').textContent    = unit === 'rub' ? fmtMln(overRub) : fmtMln(over);
+  document.getElementById('kOverUnit').textContent = sfx;
+
+  // ЭПИ (только в кВт·ч/м², не зависит от переключателя единиц)
+  const euiFact = Math.round(totalFact / AREA);
+  const euiPlan = Math.round(totalPlan / AREA);
+  const euiDiff = euiFact - euiPlan;
+  const euiSign = euiDiff >= 0 ? '+' : '−';
+  document.getElementById('kEuiFact').textContent  = euiFact;
+  document.getElementById('kEuiSub').textContent   = `план двойника: ${euiPlan} кВт·ч/м²`;
+  document.getElementById('euiFactStat').textContent = `${euiFact} кВт·ч/м²`;
+  document.getElementById('euiPlanStat').textContent = `${euiPlan} кВт·ч/м²`;
+  document.getElementById('euiDiffStat').textContent = `${euiSign}${Math.abs(euiDiff)} кВт·ч/м²`;
+
+  // Цвет ЭПИ карточки
+  const kEui = document.getElementById('kEuiFact');
+  kEui.className = euiDiff > 0 ? 'kpi-value neg' : 'kpi-value pos';
+  document.getElementById('euiDiffStat').className =
+    `stat-value ${euiDiff > 0 ? 'neg' : 'pos'}`;
+}
+
+/* ── Render all charts ─────────────────────────────────── */
+function renderAll() {
+  renderFvp();
+  renderDev();
+  renderEui();
+}
+
+/* ══ CHART 1: ФАКТ vs ДВОЙНИК ══════════════════════════ */
+function renderFvp() {
+  const res     = fvpTab;
+  const tariff  = res === 'heat' ? TARIFF_HEAT : TARIFF_ELEC;
+  const planArr = unit === 'rub' ? DATA[res].plan.map(v => Math.round(v * tariff)) : DATA[res].plan;
+  const factArr = unit === 'rub' ? DATA[res].fact.map(v => Math.round(v * tariff)) : DATA[res].fact;
+  const sfx     = unit === 'rub' ? '₽' : 'кВт·ч';
+
+  const canvas = document.getElementById('chartFvp');
+  if (chartFvp) { chartFvp.destroy(); chartFvp = null; }
+
+  chartFvp = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: MONTHS,
+      datasets: [
+        {
+          label: 'Факт',
+          data: factArr,
+          backgroundColor: C.fact,
+          borderColor: C.factBorder,
+          borderWidth: 1,
+          borderRadius: 4,
+          order: 2,
+        },
+        {
+          label: 'Двойник (план)',
+          data: planArr,
+          type: 'line',
+          borderColor: C.plan,
+          backgroundColor: 'transparent',
+          borderWidth: 2.5,
+          pointRadius: 4,
+          pointHoverRadius: 7,
+          pointBackgroundColor: C.plan,
+          tension: 0.3,
+          order: 1,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: C.tooltip,
+          borderColor: C.tooltipBdr,
+          borderWidth: 1,
+          padding: 10,
+          titleColor: document.documentElement.getAttribute('data-theme') === 'dark' ? '#fff' : '#111827',
+          bodyColor:  document.documentElement.getAttribute('data-theme') === 'dark' ? 'rgba(255,255,255,0.75)' : '#374151',
+          callbacks: {
+            label: ctx => {
+              const val = ctx.raw;
+              const delta = ctx.dataIndex;
+              if (ctx.datasetIndex === 0) {
+                const pct = planArr[delta] ? ((val - planArr[delta]) / planArr[delta] * 100).toFixed(1) : 0;
+                const sign = pct >= 0 ? '+' : '';
+                return `  Факт: ${fmtMln(val)} ${sfx}  (${sign}${pct}%)`;
+              }
+              return `  Двойник: ${fmtMln(val)} ${sfx}`;
+            },
+          },
+        },
+      },
+      scales: {
+        x: { grid: { color: C.grid }, ticks: { color: C.tick } },
+        y: {
+          grid: { color: C.grid },
+          ticks: { color: C.tick, callback: v => fmtK(v) },
+          title: { display: true, text: sfx, color: C.tick, font: { size: 11 } },
+        },
+      },
+    },
+  });
+
+  // Stat row
+  const sf = sum(factArr);
+  const sp = sum(planArr);
+  const pct = sp > 0 ? ((sf - sp) / sp * 100).toFixed(1) : 0;
+  const peakVal = Math.max(...factArr);
+  const peakIdx = factArr.indexOf(peakVal);
+  const worstPct = planArr.map((p, i) => p > 0 ? ((factArr[i] - p) / p * 100) : 0);
+  const worstIdx = worstPct.indexOf(Math.max(...worstPct));
+
+  document.getElementById('stFact').textContent  = fmtMln(sf) + ' ' + sfx;
+  document.getElementById('stPlan').textContent  = fmtMln(sp) + ' ' + sfx;
+  document.getElementById('stDelta').textContent = (pct >= 0 ? '+' : '') + pct + '%';
+  document.getElementById('stPeak').textContent  = fmtMln(peakVal) + ' ' + sfx + ' (' + MONTHS[peakIdx] + ')';
+  document.getElementById('stWorst').textContent = '+' + worstPct[worstIdx].toFixed(1) + '% (' + MONTHS[worstIdx] + ')';
+}
+
+/* ══ CHART 2: ОТКЛОНЕНИЕ ПО МЕСЯЦАМ ════════════════════ */
+function renderDev() {
+  const res = devTab;
+  const plan = DATA[res].plan;
+  const fact = DATA[res].fact;
+
+  const deltas = plan.map((p, i) => {
+    if (p === 0) return null;
+    return +((fact[i] - p) / p * 100).toFixed(1);
+  });
+
+  const canvas = document.getElementById('chartDev');
+  if (chartDev) { chartDev.destroy(); chartDev = null; }
+
+  chartDev = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: MONTHS,
+      datasets: [{
+        label: 'Отклонение, %',
+        data: deltas,
+        backgroundColor: deltas.map(v => v === null ? 'transparent' : v > 0 ? C.fact : 'rgba(91,154,123,0.65)'),
+        borderColor:     deltas.map(v => v === null ? 'transparent' : v > 0 ? C.factBorder : C.positive),
+        borderWidth: 1,
+        borderRadius: 4,
+      }],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: C.tooltip,
+          borderColor: C.tooltipBdr,
+          borderWidth: 1,
+          padding: 10,
+          titleColor: document.documentElement.getAttribute('data-theme') === 'dark' ? '#fff' : '#111827',
+          bodyColor:  document.documentElement.getAttribute('data-theme') === 'dark' ? 'rgba(255,255,255,0.75)' : '#374151',
+          callbacks: {
+            label: ctx => {
+              if (ctx.raw === null) return '  Нет данных';
+              const sign = ctx.raw >= 0 ? '+' : '';
+              return `  Отклонение: ${sign}${ctx.raw}%`;
+            },
+          },
+        },
+      },
+      scales: {
+        x: { grid: { color: C.grid }, ticks: { color: C.tick } },
+        y: {
+          grid: { color: C.grid },
+          ticks: {
+            color: C.tick,
+            callback: v => (v >= 0 ? '+' : '') + v + '%',
+          },
+          title: { display: true, text: 'Отклонение, %', color: C.tick, font: { size: 11 } },
+        },
+      },
+    },
+  });
+
+  // Insight
+  const valid    = deltas.filter(v => v !== null);
+  const maxOver  = Math.max(...valid);
+  const maxMonth = MONTHS[deltas.indexOf(maxOver)];
+  const avgOver  = (valid.reduce((a, b) => a + b, 0) / valid.length).toFixed(1);
+  const overCount = valid.filter(v => v > 0).length;
+
+  document.getElementById('insightText').innerHTML =
+    res === 'elec'
+      ? `<strong>Электричество:</strong> перерасход во всех 12 месяцах. Пик в <strong>${maxMonth}</strong> (+${maxOver}%). Среднее отклонение за год: <strong>+${avgOver}%</strong>. Наиболее вероятные причины: неэффективная работа HVAC-систем, нерегулируемая приточная установка, завышенный тепловыделений.`
+      : `<strong>Тепло:</strong> перерасход в ${overCount} месяцах. В летние месяцы потребления нет (нет подачи от сети). Пиковое отклонение в <strong>${maxMonth}</strong> (+${maxOver}%). В целом тепловой контур близок к плану двойника.`;
+}
+
+/* ══ CHART 3: ЭПИ — УДЕЛЬНОЕ ПОТРЕБЛЕНИЕ ═══════════════ */
+function renderEui() {
+  const canvas = document.getElementById('chartEui');
+  if (chartEui) { chartEui.destroy(); chartEui = null; }
+
+  const totalFact  = sum(DATA.elec.fact) + sum(DATA.heat.fact);
+  const totalPlan  = sum(DATA.elec.plan) + sum(DATA.heat.plan);
+  const euiFact   = Math.round(totalFact / AREA);
+  const euiPlan   = Math.round(totalPlan / AREA);
+  const euiMarket = 520;   // ориентир рынка ретейл Россия
+  const euiBest   = 420;   // топ-25% ретейл
+
+  const xMax = Math.max(euiFact, euiMarket, 650);
+
+  chartEui = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: ['Факт', 'Двойник\n(план)', 'Ориентир\nрынка', 'Топ-25%\nретейл'],
+      datasets: [{
+        data: [euiFact, euiPlan, euiMarket, euiBest],
+        backgroundColor: [
+          C.fact,
+          C.plan + 'aa',
+          'rgba(107,114,128,0.5)',
+          'rgba(91,154,123,0.6)',
+        ],
+        borderColor: [C.factBorder, C.plan, '#6b7280', C.positive],
+        borderWidth: 1,
+        borderRadius: 4,
+      }],
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: C.tooltip,
+          borderColor: C.tooltipBdr,
+          borderWidth: 1,
+          padding: 10,
+          titleColor: document.documentElement.getAttribute('data-theme') === 'dark' ? '#fff' : '#111827',
+          bodyColor:  document.documentElement.getAttribute('data-theme') === 'dark' ? 'rgba(255,255,255,0.75)' : '#374151',
+          callbacks: {
+            label: ctx => `  ${ctx.raw} кВт·ч/м²/год`,
+          },
+        },
+        // Value labels inside bars
+        datalabels: { display: false },
+      },
+      scales: {
+        x: {
+          grid: { color: C.grid },
+          ticks: { color: C.tick, callback: v => v + ' кВт·ч/м²' },
+          min: 0, max: Math.ceil(xMax / 50) * 50,
+        },
+        y: { grid: { display: false }, ticks: { color: C.tick } },
+      },
+    },
+  });
+}
+</script>
+</body>
+</html>

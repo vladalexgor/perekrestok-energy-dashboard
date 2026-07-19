@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Перекрёсток · Цифровой энергетический двойник</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ── Reset ────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ══════════════════════════════════════════════════════════
+       СВЕТЛАЯ ТЕМА  (default)
+    ══════════════════════════════════════════════════════════ */
+    :root {
+      --bg:          #eef1f8;
+      --surface:     #ffffff;
+      --surface-2:   #e8ecf5;
+      --surface-3:   #dce3f0;
+      --text:        #111827;
+      --muted:       rgba(17,24,39,0.42);
+      --border:      rgba(17,24,39,0.07);
+      --shadow-sm:   0 1px 4px rgba(17,24,39,0.06), 0 2px 10px rgba(17,24,39,0.04);
+      --shadow:      0 2px 8px rgba(17,24,39,0.07), 0 4px 20px rgba(17,24,39,0.05);
+      --shadow-hov:  0 6px 28px rgba(17,24,39,0.13), 0 2px 8px rgba(17,24,39,0.05);
+      --radius:      12px;
+      --radius-sm:   8px;
+
+      /* Palette */
+      --brand:       #00963A;
+      --plan:        #4a7fbc;
+      --plan-soft:   #dbeafe;
+      --plan-text:   #1e40af;
+      --positive:    #059669;
+      --pos-soft:    #d1fae5;
+      --pos-text:    #065f46;
+      --pos-track:   #f0fdf4;
+      --negative:    #dc2626;
+      --neg-soft:    #fee2e2;
+      --neg-text:    #991b1b;
+      --neg-track:   #fef2f2;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       ТЁМНАЯ ТЕМА
+    ══════════════════════════════════════════════════════════ */
+    [data-theme="dark"] {
+      --bg:          #111827;
+      --surface:     #1C2536;
+      --surface-2:   #232D3F;
+      --surface-3:   #2A3548;
+      --text:        #ffffff;
+      --muted:       rgba(255,255,255,0.50);
+      --border:      rgba(255,255,255,0.06);
+      --shadow-sm:   0 1px 4px rgba(0,0,0,0.30);
+      --shadow:      0 4px 20px rgba(0,0,0,0.35);
+      --shadow-hov:  0 8px 32px rgba(0,0,0,0.50);
+
+      --plan:        #6B9FD4;
+      --plan-soft:   rgba(107,159,212,0.15);
+      --plan-text:   #93c5fd;
+      --positive:    #5B9A7B;
+      --pos-soft:    rgba(91,154,123,0.20);
+      --pos-text:    #6ee7b7;
+      --pos-track:   rgba(91,154,123,0.10);
+      --negative:    #D4645C;
+      --neg-soft:    rgba(212,100,92,0.20);
+      --neg-text:    #fca5a5;
+      --neg-track:   rgba(212,100,92,0.10);
+    }
+
+    /* ── Base ─────────────────────────────────────────────────── */
+    html { color-scheme: light; }
+    [data-theme="dark"] { color-scheme: dark; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    /* ── TOPBAR ───────────────────────────────────────────────── */
+    .topbar {
+      position: sticky; top: 0; z-index: 100;
+      height: 56px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      display: flex; align-items: center;
+      padding: 0 1.5rem; gap: 0.9rem;
+    }
+
+    .tb-logo {
+      width: 34px; height: 34px;
+      background: var(--brand);
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .tb-logo svg { width: 20px; height: 20px; }
+
+    .tb-titles { line-height: 1.2; }
+    .tb-name   { font-size: 0.88rem; font-weight: 700; letter-spacing: -0.01em; }
+    .tb-sub    { font-size: 0.64rem; color: var(--muted); font-weight: 400; letter-spacing: 0.02em; }
+
+    .tb-sep    { width: 1px; height: 24px; background: var(--border); flex-shrink: 0; }
+    .tb-year   { font-size: 0.8rem; font-weight: 600; color: var(--muted); letter-spacing: 0.05em; }
+    .tb-spacer { flex: 1; }
+
+    /* Unit toggle */
+    .btn-grp {
+      display: flex; align-items: center;
+      background: var(--surface-2);
+      border-radius: var(--radius-sm);
+      padding: 3px; gap: 2px;
+    }
+    .btn-grp-btn {
+      font-family: inherit; font-size: 0.77rem; font-weight: 500;
+      padding: 0.28rem 0.85rem;
+      border: none; background: transparent;
+      color: var(--muted); border-radius: 6px;
+      cursor: pointer; transition: all 0.15s ease; white-space: nowrap;
+    }
+    .btn-grp-btn.active {
+      background: var(--surface); color: var(--text);
+      box-shadow: var(--shadow-sm); font-weight: 600;
+    }
+    .btn-grp-btn:hover:not(.active) { color: var(--text); }
+
+    /* Theme toggle — точно как в Галсе */
+    .theme-toggle {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 1rem; line-height: 1;
+      width: 34px; height: 34px;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.15s, color 0.15s;
+      flex-shrink: 0;
+    }
+    .theme-toggle:hover { border-color: var(--plan); color: var(--text); }
+
+    /* ── BREADCRUMBS ──────────────────────────────────────────── */
+    .breadcrumbs {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 1.5rem;
+    }
+    .bc-inner {
+      max-width: 1280px; margin: 0 auto;
+      height: 34px; display: flex; align-items: center; gap: 0.35rem;
+    }
+    .bc-item {
+      font-size: 0.73rem; font-weight: 500; color: var(--muted);
+      text-decoration: none; transition: color 0.15s;
+      white-space: nowrap;
+    }
+    a.bc-item:hover { color: var(--plan); }
+    .bc-current { color: var(--text); font-weight: 600; }
+    .bc-sep { font-size: 0.73rem; color: var(--muted); user-select: none; opacity: 0.5; }
+    /* лёгкая иконка «дом» перед первым элементом */
+    .bc-home::before { content: '⌂ '; font-size: 0.8rem; }
+
+    /* ── HERO ─────────────────────────────────────────────────── */
+    .hero {
+      background: linear-gradient(135deg, #152234 0%, #1b3560 55%, #243e75 100%);
+      padding: 1.75rem 1.5rem 1.6rem;
+      position: relative; overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(ellipse at 85% 50%, rgba(74,127,188,0.18) 0%, transparent 65%);
+    }
+    .hero-inner { max-width: 1280px; margin: 0 auto; position: relative; z-index: 1; }
+    .hero-eyebrow {
+      font-size: 0.63rem; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: rgba(255,255,255,0.42); margin-bottom: 0.35rem;
+    }
+    .hero-title {
+      font-size: 1.55rem; font-weight: 800;
+      color: #fff; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 0.3rem;
+    }
+    .hero-sub { font-size: 0.82rem; color: rgba(255,255,255,0.55); }
+
+    /* ── MAIN ─────────────────────────────────────────────────── */
+    .main { max-width: 1280px; margin: 0 auto; padding: 1.5rem 1.5rem 3rem; }
+
+    /* ── KPI SUMMARY ──────────────────────────────────────────── */
+    .kpi-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1rem; margin-bottom: 1.5rem;
+    }
+    .kpi-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 1.1rem 1.2rem 1rem;
+      box-shadow: var(--shadow);
+      animation: fadeUp 0.4s ease both;
+    }
+    .kpi-card:nth-child(1) { animation-delay:   0ms; }
+    .kpi-card:nth-child(2) { animation-delay:  60ms; }
+    .kpi-card:nth-child(3) { animation-delay: 120ms; }
+    .kpi-card:nth-child(4) { animation-delay: 180ms; }
+
+    .kpi-label {
+      font-size: 0.62rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 0.45rem;
+    }
+    .kpi-value {
+      font-size: 1.8rem; font-weight: 800;
+      letter-spacing: -0.025em; line-height: 1; margin-bottom: 0.22rem;
+    }
+    .kpi-value.neg { color: var(--negative); }
+    .kpi-value.pos { color: var(--positive); }
+    .kpi-sub { font-size: 0.7rem; color: var(--muted); }
+
+    .kpi-bar-row { display: flex; align-items: center; gap: 0.4rem; margin-top: 0.65rem; }
+    .kpi-track { flex: 1; height: 4px; background: var(--surface-2); border-radius: 2px; overflow: hidden; }
+    .kpi-fill  { height: 100%; border-radius: 2px; transition: width 0.8s cubic-bezier(0.16,1,0.3,1); }
+    .kpi-fill.neg { background: var(--negative); }
+    .kpi-fill.pos { background: var(--positive); }
+    .kpi-pct { font-size: 0.68rem; font-weight: 600; color: var(--muted); }
+
+    /* ── CONTROLS BAR ─────────────────────────────────────────── */
+    .controls-bar {
+      display: flex; align-items: center;
+      gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap;
+    }
+    .ftabs {
+      display: flex; align-items: center;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 3px; gap: 2px;
+      box-shadow: var(--shadow-sm);
+    }
+    .ftab {
+      font-family: inherit; font-size: 0.76rem; font-weight: 500;
+      padding: 0.28rem 0.8rem;
+      border: none; background: transparent;
+      color: var(--muted); border-radius: 6px;
+      cursor: pointer; transition: all 0.15s ease;
+      display: flex; align-items: center; gap: 0.35rem;
+    }
+    .ftab.active { background: var(--surface-2); color: var(--text); font-weight: 600; }
+    .ftab:hover:not(.active) { color: var(--text); }
+
+    .badge {
+      font-size: 0.62rem; font-weight: 700;
+      padding: 0.1rem 0.42rem; border-radius: 10px; line-height: 1.5;
+    }
+    .badge-red   { background: var(--neg-soft); color: var(--neg-text); }
+    .badge-green { background: var(--pos-soft); color: var(--pos-text); }
+    .badge-blue  { background: var(--plan-soft); color: var(--plan-text); }
+    .badge-grey  { background: var(--surface-2); color: var(--muted); }
+
+    .ctrl-sep    { width: 1px; height: 22px; background: var(--border); flex-shrink: 0; }
+    .ctrl-spacer { flex: 1; }
+    .ctrl-label  { font-size: 0.7rem; color: var(--muted); font-weight: 500; white-space: nowrap; }
+
+    select.ctrl-sel, input.ctrl-inp {
+      font-family: inherit; font-size: 0.76rem; font-weight: 500;
+      padding: 0.32rem 0.7rem;
+      border: 1px solid var(--border);
+      background: var(--surface); color: var(--text);
+      border-radius: var(--radius-sm); cursor: pointer;
+      outline: none; box-shadow: var(--shadow-sm);
+      transition: border-color 0.15s;
+    }
+    select.ctrl-sel:focus, input.ctrl-inp:focus { border-color: var(--plan); }
+    input.ctrl-inp { width: 200px; }
+    input.ctrl-inp::placeholder { color: var(--muted); }
+
+    /* ── STORE GRID ───────────────────────────────────────────── */
+    .store-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+
+    /* ── STORE CARD ───────────────────────────────────────────── */
+    .store-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--positive);
+      box-shadow: var(--shadow);
+      padding: 1.05rem 1.1rem 0.95rem;
+      cursor: pointer;
+      display: flex; flex-direction: column; gap: 0.7rem;
+      animation: fadeUp 0.35s ease both;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+    .store-card.over  { border-left-color: var(--negative); }
+    .store-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hov); }
+
+    /* Card header */
+    .c-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem; }
+    .c-head-l { display: flex; align-items: flex-start; gap: 0.45rem; flex: 1; min-width: 0; }
+    .c-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--positive); flex-shrink: 0; margin-top: 5px; }
+    .c-dot.red { background: var(--negative); }
+    .c-city { font-size: 0.6rem; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.18rem; }
+    .c-name { font-size: 0.86rem; font-weight: 700; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .c-type {
+      display: inline-flex; align-items: center;
+      padding: 0.12rem 0.48rem;
+      background: var(--surface-2); color: var(--muted);
+      border-radius: 5px; font-size: 0.62rem; font-weight: 500;
+      white-space: nowrap; flex-shrink: 0; margin-top: 0.05rem;
+    }
+
+    /* Metric */
+    .c-metric { display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; }
+    .c-metric-block { display: flex; flex-direction: column; gap: 0.12rem; }
+    .c-lbl  { font-size: 0.58rem; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); }
+    .c-val  { font-size: 1.42rem; font-weight: 800; letter-spacing: -0.025em; line-height: 1; }
+    .c-unit { font-size: 0.7rem; font-weight: 500; color: var(--muted); margin-left: 0.15rem; }
+
+    .delta-pill {
+      display: inline-flex; align-items: center; gap: 0.15rem;
+      padding: 0.25rem 0.55rem; border-radius: 6px;
+      font-size: 0.78rem; font-weight: 700; white-space: nowrap; flex-shrink: 0;
+    }
+    .delta-pill.pos { background: var(--pos-soft); color: var(--pos-text); }
+    .delta-pill.neg { background: var(--neg-soft); color: var(--neg-text); }
+
+    /* Bullet chart */
+    .c-bullet { display: flex; flex-direction: column; gap: 0.28rem; }
+    .bl-row   { display: flex; align-items: center; gap: 0.55rem; }
+    .bl-lbl   {
+      font-size: 0.58rem; font-weight: 600; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--muted); width: 28px; flex-shrink: 0;
+    }
+    .bl-track {
+      flex: 1; height: 6px;
+      border-radius: 3px; position: relative; overflow: visible;
+    }
+    /* Track colours respond to theme via CSS vars */
+    .bl-track.pos-bg { background: var(--pos-track); }
+    .bl-track.neg-bg { background: var(--neg-track); }
+    .bl-track.neutral-bg { background: var(--surface-2); }
+
+    .bl-fill {
+      position: absolute; left: 0; top: 0;
+      height: 100%; border-radius: 3px; width: 0;
+      transition: width 0.7s cubic-bezier(0.16,1,0.3,1);
+    }
+    .bl-fill.pos { background: var(--positive); }
+    .bl-fill.neg { background: var(--negative); }
+
+    /* Plan marker — тонкая синяя линия с белым гало */
+    .bl-mark {
+      position: absolute; top: -4px;
+      width: 2px; height: 14px;
+      background: var(--plan); border-radius: 1px;
+      transform: translateX(-50%); left: 0;
+      z-index: 2; box-shadow: 0 0 0 1.5px var(--surface);
+      transition: left 0.7s cubic-bezier(0.16,1,0.3,1);
+    }
+    .bl-val { font-size: 0.64rem; font-weight: 600; color: var(--muted); width: 54px; text-align: right; flex-shrink: 0; }
+
+    /* Card footer */
+    .c-foot {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 0.6rem; border-top: 1px solid var(--border); margin-top: auto;
+    }
+    .c-area { font-size: 0.63rem; color: var(--muted); }
+    .c-link {
+      font-size: 0.7rem; font-weight: 600; color: var(--plan);
+      cursor: pointer; display: flex; align-items: center; gap: 0.18rem;
+      transition: gap 0.15s; text-decoration: none;
+    }
+    .c-link:hover { gap: 0.38rem; }
+
+    /* Empty state */
+    .empty-state { grid-column: 1/-1; text-align: center; padding: 4rem 2rem; color: var(--muted); }
+    .empty-icon  { font-size: 2.5rem; margin-bottom: 0.75rem; opacity: 0.35; }
+    .empty-text  { font-size: 0.88rem; }
+
+    /* ── FOOTER ───────────────────────────────────────────────── */
+    footer {
+      text-align: center; padding: 1.5rem;
+      font-size: 0.68rem; color: var(--muted);
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    /* ── Animations ───────────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Responsive ───────────────────────────────────────────── */
+    @media (max-width: 1100px) { .store-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 860px)  { .kpi-grid   { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px)  {
+      .store-grid { grid-template-columns: 1fr; }
+      .kpi-grid   { grid-template-columns: repeat(2, 1fr); }
+      .tb-sub     { display: none; }
+      input.ctrl-inp { width: 140px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── TOPBAR ─────────────────────────────────────────────────── -->
+<header class="topbar">
+  <div class="tb-logo">
+    <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M3 10h14M10 3v14" stroke="white" stroke-width="2.4" stroke-linecap="round"/>
+      <circle cx="10" cy="10" r="3" fill="white" fill-opacity="0.22"/>
+    </svg>
+  </div>
+  <div class="tb-titles">
+    <div class="tb-name">Перекрёсток</div>
+    <div class="tb-sub">Цифровой энергетический двойник</div>
+  </div>
+  <div class="tb-sep"></div>
+  <span class="tb-year">2025</span>
+  <div class="tb-spacer"></div>
+
+  <!-- Unit toggle -->
+  <div class="btn-grp" id="unitToggle">
+    <button class="btn-grp-btn active" data-unit="rub" onclick="setUnit('rub')">₽</button>
+    <button class="btn-grp-btn"        data-unit="kwh" onclick="setUnit('kwh')">кВт·ч</button>
+  </div>
+
+  <!-- Theme toggle — как в Галсе -->
+  <button class="theme-toggle" id="themeToggle" title="Переключить тему">
+    <span id="themeIcon">🌙</span>
+  </button>
+</header>
+
+<!-- ── BREADCRUMBS ──────────────────────────────────────────────── -->
+<nav class="breadcrumbs" aria-label="Навигация">
+  <div class="bc-inner">
+    <span class="bc-item bc-home">Перекрёсток · Цифровой двойник</span>
+    <span class="bc-sep">›</span>
+    <span class="bc-item bc-current">Все объекты</span>
+  </div>
+</nav>
+
+<!-- ── HERO ───────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Пилотная программа · 2025</div>
+    <div class="hero-title">Пилотная группа объектов</div>
+    <div class="hero-sub">30 магазинов · Мониторинг план-факт энергопотребления</div>
+  </div>
+</section>
+
+<!-- ── MAIN ───────────────────────────────────────────────────── -->
+<main class="main">
+
+  <!-- KPI Summary -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Объектов в пилоте</div>
+      <div class="kpi-value">30</div>
+      <div class="kpi-sub">магазинов под мониторингом</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Перерасход</div>
+      <div class="kpi-value neg" id="kpiOverCount">—</div>
+      <div class="kpi-sub" id="kpiOverSub">объектов выше плана</div>
+      <div class="kpi-bar-row">
+        <div class="kpi-track"><div class="kpi-fill neg" id="kpiOverFill" style="width:0"></div></div>
+        <span class="kpi-pct" id="kpiOverPct"></span>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">В норме</div>
+      <div class="kpi-value pos" id="kpiOkCount">—</div>
+      <div class="kpi-sub" id="kpiOkSub">объектов в пределах плана</div>
+      <div class="kpi-bar-row">
+        <div class="kpi-track"><div class="kpi-fill pos" id="kpiOkFill" style="width:0"></div></div>
+        <span class="kpi-pct" id="kpiOkPct"></span>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Суммарный перерасход</div>
+      <div class="kpi-value neg" id="kpiOverTotal">—</div>
+      <div class="kpi-sub" id="kpiOverTotalSub">от объектов с превышением</div>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls-bar">
+    <div class="ftabs">
+      <button class="ftab active" data-filter="all"  onclick="setFilter('all')">
+        Все <span class="badge badge-blue" id="bAll">30</span>
+      </button>
+      <button class="ftab" data-filter="over" onclick="setFilter('over')">
+        Перерасход <span class="badge badge-grey" id="bOver">—</span>
+      </button>
+      <button class="ftab" data-filter="ok"   onclick="setFilter('ok')">
+        В норме <span class="badge badge-grey" id="bOk">—</span>
+      </button>
+    </div>
+
+    <div class="ctrl-sep"></div>
+
+    <span class="ctrl-label">Город:</span>
+    <select class="ctrl-sel" id="citySelect" onchange="render()">
+      <option value="">Все города</option>
+    </select>
+
+    <div class="ctrl-spacer"></div>
+
+    <span class="ctrl-label">Сортировка:</span>
+    <select class="ctrl-sel" id="sortSelect" onchange="render()">
+      <option value="delta_desc">По отклонению ↓</option>
+      <option value="delta_asc">По отклонению ↑</option>
+      <option value="value_desc">По потреблению ↓</option>
+      <option value="name_asc">По адресу А–Я</option>
+    </select>
+
+    <input class="ctrl-inp" type="text" id="searchInput"
+           placeholder="Поиск по адресу…" oninput="render()">
+  </div>
+
+  <!-- Store Grid -->
+  <div class="store-grid" id="storeGrid"></div>
+
+</main>
+
+<footer>
+  Перекрёсток · Цифровой энергетический двойник · Пилотная версия 2025
+</footer>
+
+<!-- ════════════════════════════════════════════════════════════
+     SCRIPT
+════════════════════════════════════════════════════════════ -->
+<script>
+/* ─── Data ─────────────────────────────────────────────────── */
+const TARIFF = 6.12; // ₽/кВт·ч
+
+const STORES = [
+  { id:  1, name: 'Большевиков, 9',            city: 'Санкт-Петербург', type: 'Гипермаркет', area: 4200, plan: 2100000, delta:  12.3 },
+  { id:  2, name: 'Ленинский пр., 114',         city: 'Санкт-Петербург', type: 'Супермаркет', area: 1800, plan:  900000, delta:  -4.7 },
+  { id:  3, name: 'Комендантский пр., 7',       city: 'Санкт-Петербург', type: 'Супермаркет', area: 1600, plan:  820000, delta:   8.1 },
+  { id:  4, name: 'Пулковское ш., 40к2',        city: 'Санкт-Петербург', type: 'Гипермаркет', area: 5100, plan: 2550000, delta:  -2.9 },
+  { id:  5, name: 'ул. Типанова, 27',           city: 'Санкт-Петербург', type: 'Супермаркет', area: 2100, plan: 1050000, delta:  17.8 },
+  { id:  6, name: 'пр. Просвещения, 31',        city: 'Санкт-Петербург', type: 'Супермаркет', area: 1400, plan:  700000, delta:  -1.5 },
+  { id:  7, name: 'ул. Ленина, 52',             city: 'Пушкин (СПб)',    type: 'Супермаркет', area: 1200, plan:  600000, delta:   6.4 },
+  { id:  8, name: 'Московский пр., 212',        city: 'Санкт-Петербург', type: 'Гипермаркет', area: 4800, plan: 2400000, delta:  -8.6 },
+  { id:  9, name: 'ул. Бухарестская, 89',       city: 'Санкт-Петербург', type: 'Супермаркет', area: 2300, plan: 1150000, delta:  22.1 },
+  { id: 10, name: 'Придорожная аллея, 17',      city: 'Санкт-Петербург', type: 'Супермаркет', area: 1550, plan:  775000, delta:  -0.8 },
+  { id: 11, name: 'Новинский б-р, 31',          city: 'Москва',          type: 'Супермаркет', area: 1700, plan:  850000, delta:  -6.9 },
+  { id: 12, name: 'Варшавское ш., 87',          city: 'Москва',          type: 'Гипермаркет', area: 4500, plan: 2250000, delta:  13.7 },
+  { id: 13, name: 'ул. Маршала Жукова, 4',      city: 'Москва',          type: 'Супермаркет', area: 1900, plan:  950000, delta:  -3.8 },
+  { id: 14, name: 'Дмитровское ш., 98',         city: 'Москва',          type: 'Гипермаркет', area: 3800, plan: 1900000, delta:   9.2 },
+  { id: 15, name: 'ул. Ставропольская, 84',     city: 'Москва',          type: 'Супермаркет', area: 1300, plan:  650000, delta:  -5.4 },
+  { id: 16, name: 'пр. Вернадского, 37',        city: 'Москва',          type: 'Супермаркет', area: 2200, plan: 1100000, delta:   3.1 },
+  { id: 17, name: 'Борисовские пруды, 14',      city: 'Москва',          type: 'Супермаркет', area: 1450, plan:  725000, delta: -11.8 },
+  { id: 18, name: 'Ярославское ш., 116',        city: 'Москва',          type: 'Гипермаркет', area: 4200, plan: 2100000, delta:  -2.1 },
+  { id: 19, name: 'пр. Победы, 29',             city: 'Казань',          type: 'Гипермаркет', area: 3600, plan: 1800000, delta:   7.3 },
+  { id: 20, name: 'ул. Чистопольская, 20',      city: 'Казань',          type: 'Супермаркет', area: 1100, plan:  550000, delta:  -8.2 },
+  { id: 21, name: 'ул. Родионова, 187',         city: 'Нижний Новгород', type: 'Гипермаркет', area: 4100, plan: 2050000, delta:  11.4 },
+  { id: 22, name: 'пр. Ленина, 15',             city: 'Нижний Новгород', type: 'Супермаркет', area: 1600, plan:  800000, delta:  -3.2 },
+  { id: 23, name: 'ул. Репина, 94',             city: 'Екатеринбург',    type: 'Гипермаркет', area: 4700, plan: 2350000, delta: -15.1 },
+  { id: 24, name: 'ул. 8 Марта, 153',           city: 'Екатеринбург',    type: 'Супермаркет', area: 1800, plan:  900000, delta:   5.2 },
+  { id: 25, name: 'Московское ш., 15',          city: 'Самара',          type: 'Гипермаркет', area: 3900, plan: 1950000, delta:  18.9 },
+  { id: 26, name: 'ул. Ново-Садовая, 106',      city: 'Самара',          type: 'Супермаркет', area: 1350, plan:  675000, delta:  -4.1 },
+  { id: 27, name: 'Ленинский пр., 153',         city: 'Воронеж',         type: 'Гипермаркет', area: 3200, plan: 1600000, delta:  -7.3 },
+  { id: 28, name: 'ул. Хользунова, 35',         city: 'Воронеж',         type: 'Супермаркет', area: 1250, plan:  625000, delta:  12.8 },
+  { id: 29, name: 'ул. Красных Партизан, 212',  city: 'Краснодар',       type: 'Гипермаркет', area: 4400, plan: 2200000, delta:  -1.8 },
+  { id: 30, name: 'ул. Дзержинского, 100',      city: 'Краснодар',       type: 'Супермаркет', area: 1650, plan:  825000, delta:   4.0 },
+];
+
+STORES.forEach(s => {
+  s.fact     = Math.round(s.plan * (1 + s.delta / 100));
+  s.fact_rub = Math.round(s.fact * TARIFF);
+  s.plan_rub = Math.round(s.plan * TARIFF);
+  s.over     = s.delta > 0;
+});
+
+/* ─── State ─────────────────────────────────────────────── */
+let unit   = 'rub';
+let filter = 'all';
+
+/* ════════════════════════════════════════════════════════
+   ТЕМА — точно как в Галсе
+════════════════════════════════════════════════════════ */
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  document.documentElement.style.colorScheme = theme;
+  try { localStorage.setItem('pk-theme', theme); } catch (_) {}
+  document.getElementById('themeIcon').textContent = theme === 'light' ? '🌙' : '☀';
+}
+
+function initTheme() {
+  const saved = (() => { try { return localStorage.getItem('pk-theme'); } catch (_) { return null; } })();
+  applyTheme(saved === 'dark' ? 'dark' : 'light'); // default = light
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    applyTheme(next);
+  });
+}
+
+/* ─── Init ──────────────────────────────────────────────── */
+window.addEventListener('DOMContentLoaded', () => {
+  initTheme();
+  populateCities();
+  updateKPIs();
+  updateBadges();
+  render();
+  // Animate KPI bars after first paint
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    const over  = STORES.filter(s => s.over).length;
+    const ok    = STORES.length - over;
+    document.getElementById('kpiOverFill').style.width = (over / STORES.length * 100) + '%';
+    document.getElementById('kpiOkFill').style.width   = (ok   / STORES.length * 100) + '%';
+  }));
+});
+
+/* ─── Cities dropdown ───────────────────────────────────── */
+function populateCities() {
+  const cities = [...new Set(STORES.map(s => s.city))].sort((a, b) => a.localeCompare(b, 'ru'));
+  const sel = document.getElementById('citySelect');
+  cities.forEach(c => {
+    const o = document.createElement('option');
+    o.value = c; o.textContent = c; sel.appendChild(o);
+  });
+}
+
+/* ─── Unit toggle ───────────────────────────────────────── */
+function setUnit(u) {
+  unit = u;
+  document.querySelectorAll('[data-unit]').forEach(btn =>
+    btn.classList.toggle('active', btn.dataset.unit === u));
+  updateKPIs();
+  render();
+}
+
+/* ─── Filter tabs ───────────────────────────────────────── */
+function setFilter(f) {
+  filter = f;
+  const colorMap = { all: 'badge-blue', over: 'badge-red', ok: 'badge-green' };
+  document.querySelectorAll('.ftab').forEach(btn => {
+    const active = btn.dataset.filter === f;
+    btn.classList.toggle('active', active);
+    const badge = btn.querySelector('.badge');
+    if (badge) badge.className = 'badge ' + (active ? colorMap[btn.dataset.filter] : 'badge-grey');
+  });
+  render();
+}
+
+/* ─── KPI Update ────────────────────────────────────────── */
+function updateKPIs() {
+  const over  = STORES.filter(s => s.over);
+  const total = STORES.length;
+  const overPct = Math.round(over.length / total * 100);
+  const okPct   = 100 - overPct;
+
+  document.getElementById('kpiOverCount').textContent = over.length;
+  document.getElementById('kpiOverSub').textContent   = `объектов выше плана (${overPct}%)`;
+  document.getElementById('kpiOverPct').textContent   = overPct + '%';
+
+  document.getElementById('kpiOkCount').textContent   = total - over.length;
+  document.getElementById('kpiOkSub').textContent     = `объектов в пределах плана (${okPct}%)`;
+  document.getElementById('kpiOkPct').textContent     = okPct + '%';
+
+  const overKwh = over.reduce((s, x) => s + (x.fact - x.plan), 0);
+  const overRub = over.reduce((s, x) => s + (x.fact_rub - x.plan_rub), 0);
+  document.getElementById('kpiOverTotal').textContent =
+    unit === 'rub' ? fmtMln(overRub) + ' ₽' : fmtMln(overKwh) + ' кВт·ч';
+  document.getElementById('kpiOverTotalSub').textContent =
+    unit === 'rub' ? 'суммарный перерасход в рублях' : 'суммарный перерасход в кВт·ч';
+}
+
+function updateBadges() {
+  const over = STORES.filter(s => s.over).length;
+  document.getElementById('bAll').textContent  = STORES.length;
+  document.getElementById('bOver').textContent = over;
+  document.getElementById('bOk').textContent   = STORES.length - over;
+}
+
+/* ─── Formatters ────────────────────────────────────────── */
+function fmtMln(v) {
+  const a = Math.abs(v);
+  if (a >= 1e9) return (v/1e9).toFixed(1).replace('.',',') + ' млрд';
+  if (a >= 1e6) return (v/1e6).toFixed(1).replace('.',',') + ' млн';
+  if (a >= 1e3) return Math.round(v/1e3) + ' тыс.';
+  return v.toLocaleString('ru-RU');
+}
+function fmtShort(v) {
+  const a = Math.abs(v);
+  if (a >= 1e6) return (v/1e6).toFixed(2).replace('.',',') + ' млн';
+  if (a >= 1e3) return Math.round(v/1e3) + ' тыс.';
+  return v.toLocaleString('ru-RU');
+}
+
+/* ─── Main render ───────────────────────────────────────── */
+function render() {
+  const search  = document.getElementById('searchInput').value.toLowerCase().trim();
+  const city    = document.getElementById('citySelect').value;
+  const sortKey = document.getElementById('sortSelect').value;
+
+  let list = STORES.filter(s => {
+    if (filter === 'over' && !s.over) return false;
+    if (filter === 'ok'  &&  s.over) return false;
+    if (city   && s.city !== city)   return false;
+    if (search && !s.name.toLowerCase().includes(search) &&
+                  !s.city.toLowerCase().includes(search)) return false;
+    return true;
+  });
+
+  list.sort((a, b) => {
+    if (sortKey === 'delta_desc') return b.delta - a.delta;
+    if (sortKey === 'delta_asc')  return a.delta - b.delta;
+    if (sortKey === 'value_desc') return unit === 'rub' ? b.fact_rub - a.fact_rub : b.fact - a.fact;
+    if (sortKey === 'name_asc')   return a.name.localeCompare(b.name, 'ru');
+    return 0;
+  });
+
+  const grid = document.getElementById('storeGrid');
+
+  if (!list.length) {
+    grid.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">🔍</div>
+      <div class="empty-text">Объекты не найдены</div></div>`;
+    return;
+  }
+
+  /* Bullet chart: scale = max(plan, fact) × 1.08
+     Plan marker at planPct %, fact bar at factPct % */
+  grid.innerHTML = list.map((s, i) => {
+    const planVal = unit === 'rub' ? s.plan_rub : s.plan;
+    const factVal = unit === 'rub' ? s.fact_rub : s.fact;
+    const sfx     = unit === 'rub' ? '₽' : 'кВт·ч';
+
+    const scale   = Math.max(planVal, factVal) * 1.08;
+    const markPct = +(planVal / scale * 100).toFixed(2);
+    const factPct = Math.min(+(factVal / scale * 100).toFixed(2), 99);
+
+    const absDelta = Math.abs(s.delta).toFixed(1).replace('.', ',');
+    const sign     = s.over ? '+' : '−';
+
+    return `
+    <div class="store-card${s.over ? ' over' : ''}"
+         onclick="openStore(${s.id})"
+         style="animation-delay:${i * 25}ms">
+
+      <div class="c-head">
+        <div class="c-head-l">
+          <div class="c-dot${s.over ? ' red' : ''}"></div>
+          <div>
+            <div class="c-city">${s.city}</div>
+            <div class="c-name" title="${s.name}">${s.name}</div>
+          </div>
+        </div>
+        <div class="c-type">${s.type}</div>
+      </div>
+
+      <div class="c-metric">
+        <div class="c-metric-block">
+          <div class="c-lbl">Факт</div>
+          <div class="c-val">${fmtMln(factVal)}<span class="c-unit">${sfx}</span></div>
+        </div>
+        <div class="delta-pill ${s.over ? 'neg' : 'pos'}">${sign}${absDelta}%</div>
+      </div>
+
+      <div class="c-bullet">
+        <div class="bl-row">
+          <span class="bl-lbl">План</span>
+          <div class="bl-track neutral-bg">
+            <div class="bl-fill pos" style="opacity:0.3;width:0" data-w="${markPct}%"></div>
+            <div class="bl-mark" data-left="${markPct}%"></div>
+          </div>
+          <span class="bl-val">${fmtShort(planVal)}</span>
+        </div>
+        <div class="bl-row">
+          <span class="bl-lbl">Факт</span>
+          <div class="bl-track ${s.over ? 'neg-bg' : 'pos-bg'}">
+            <div class="bl-fill ${s.over ? 'neg' : 'pos'}" style="width:0" data-w="${factPct}%"></div>
+            <div class="bl-mark" data-left="${markPct}%"></div>
+          </div>
+          <span class="bl-val">${fmtShort(factVal)}</span>
+        </div>
+      </div>
+
+      <div class="c-foot">
+        <span class="c-area">${s.area.toLocaleString('ru-RU')} м²</span>
+        <span class="c-link" onclick="event.stopPropagation();openStore(${s.id})">Подробнее →</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Animate bullet bars
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    grid.querySelectorAll('[data-w]').forEach(el => { el.style.width = el.dataset.w; });
+    grid.querySelectorAll('[data-left]').forEach(el => { el.style.left = el.dataset.left; });
+  }));
+}
+
+/* ─── Open store (Level 2) ──────────────────────────────── */
+function openStore(id) {
+  window.location.href = `level2.html?id=${id}`;
+}
+</script>
+</body>
+</html>
