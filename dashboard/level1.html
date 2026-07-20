@@ -411,9 +411,13 @@
       .main { padding: 1rem 1rem 2rem; }
       input.ctrl-inp { width: 130px; }
     }
-    @media (max-width: 480px) {
-      .tb-datazoom { display: none; }
-      .kpi-grid { grid-template-columns: 1fr; }
+    @media (max-width: 560px) { .tb-datazoom { display: none; } }
+    @media (max-width: 480px) { .kpi-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 375px) {
+      .main { padding: 0.75rem 0.75rem 2rem; }
+      .hero { padding: 1rem 0.75rem; }
+      .controls-bar { gap: 0.5rem; }
+      input.ctrl-inp { width: 100px; }
     }
 
     /* ── FOOTER ──────────────────────────────────────────────── */

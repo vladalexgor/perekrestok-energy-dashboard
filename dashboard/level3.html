@@ -256,7 +256,8 @@
     }
     .donut-wrap { position: relative; height: 240px; }
 
-    .consumer-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+    .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .consumer-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; min-width: 360px; }
     .consumer-table th {
       font-size: 0.6rem; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase;
       color: var(--muted); padding: 0 0.6rem 0.6rem;
@@ -376,12 +377,16 @@
       .main { padding: 1rem 1rem 2rem; }
       .hero { padding: 1.25rem 1rem 1.1rem; }
     }
+    @media (max-width: 560px) { .tb-datazoom { display: none; } }
     @media (max-width: 480px) {
-      .tb-datazoom { display: none; }
       .kpi-grid { grid-template-columns: 1fr; }
+      .col-plan { display: none; }
     }
-    @media (max-width: 460px) {
-      .kpi-grid { grid-template-columns: 1fr; }
+    @media (max-width: 375px) {
+      .main { padding: 0.75rem 0.75rem 2rem; }
+      .hero { padding: 1rem 0.75rem; }
+      .panel { padding: 1rem; }
+      .date-display { min-width: 60px; font-size: 0.65rem; }
     }
 
     /* ── FOOTER ──────────────────────────────────────────────── */
@@ -564,13 +569,13 @@
       <div class="donut-wrap">
         <canvas id="chartDonut"></canvas>
       </div>
-      <div>
+      <div class="table-scroll">
         <table class="consumer-table">
           <thead>
             <tr>
               <th>Потребитель</th>
               <th>Факт</th>
-              <th>Эталон</th>
+              <th class="col-plan">Эталон</th>
               <th>Отклонение</th>
               <th>Доля</th>
             </tr>
@@ -1120,7 +1125,7 @@ function renderDonut() {
     tr.innerHTML = `
       <td><span class="c-name"><span class="c-dot" style="background:${c.color}"></span>${c.name}</span></td>
       <td>${factSum.toFixed(1)}</td>
-      <td>${planSum.toFixed(1)}</td>
+      <td class="col-plan">${planSum.toFixed(1)}</td>
       <td><span class="badge-delta ${over ? 'badge-neg' : 'badge-pos'}">${over ? '+' : ''}${diffPct.toFixed(1)}%</span></td>
       <td>${share.toFixed(1)}%</td>
     `;
@@ -1135,7 +1140,7 @@ function renderDonut() {
     <tr>
       <td>Итого</td>
       <td>${totalFact.toFixed(1)}</td>
-      <td>${totalPlan.toFixed(1)}</td>
+      <td class="col-plan">${totalPlan.toFixed(1)}</td>
       <td><span class="badge-delta ${footOver ? 'badge-neg' : 'badge-pos'}">${footOver ? '+' : ''}${totalDiffPct.toFixed(1)}%</span></td>
       <td>100%</td>
     </tr>
