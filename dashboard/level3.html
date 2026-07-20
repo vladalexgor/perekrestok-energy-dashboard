@@ -318,13 +318,15 @@
     /* JS-driven tooltip — position: fixed escapes any overflow container */
     #hmTip {
       position: fixed;
-      background: var(--surface-3); color: var(--text);
-      font-size: 0.65rem; font-weight: 600; white-space: nowrap;
-      padding: 4px 8px; border-radius: 5px;
-      border: 1px solid var(--border);
+      background: rgba(15,23,42,0.93);
+      color: rgba(255,255,255,0.80);
+      font-family: 'Inter', sans-serif;
+      font-size: 12px; font-weight: 500;
+      white-space: nowrap;
+      padding: 6px 10px; border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.12);
       pointer-events: none; z-index: 9999;
       display: none;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
 
     /* Heatmap color scale legend */
