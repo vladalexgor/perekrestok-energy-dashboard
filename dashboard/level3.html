@@ -255,13 +255,6 @@
       gap: 1.5rem; align-items: start;
     }
     .donut-wrap { position: relative; height: 240px; }
-    .donut-center {
-      position: absolute; top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center; pointer-events: none;
-    }
-    .donut-center-val  { font-size: 1.35rem; font-weight: 800; }
-    .donut-center-label { font-size: 0.65rem; color: var(--muted); font-weight: 600; margin-top: 0.1rem; }
 
     .consumer-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
     .consumer-table th {
@@ -568,10 +561,6 @@
     <div class="breakdown-wrap">
       <div class="donut-wrap">
         <canvas id="chartDonut"></canvas>
-        <div class="donut-center">
-          <div class="donut-center-val" id="donutTotal">—</div>
-          <div class="donut-center-label" id="donutUnit">кВт·ч</div>
-        </div>
       </div>
       <div>
         <table class="consumer-table">
@@ -1055,6 +1044,32 @@ function renderDonut() {
   const canvas = document.getElementById('chartDonut');
   if (chartDonut) { chartDonut.destroy(); chartDonut = null; }
 
+  const centerValText  = fmtN(totalFact);
+  const centerUnitText = sfx + ' факт';
+
+  const centerPlugin = {
+    id: 'donutCenter',
+    afterDraw(chart) {
+      const { ctx, chartArea: { top, bottom, left, right } } = chart;
+      const cx = (left + right) / 2;
+      const cy = (top + bottom) / 2;
+      const textColor = getComputedStyle(document.documentElement)
+        .getPropertyValue('--text').trim() || '#111827';
+      const mutedColor = getComputedStyle(document.documentElement)
+        .getPropertyValue('--muted').trim() || 'rgba(17,24,39,0.42)';
+      ctx.save();
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.font = "800 1.25rem 'Inter', sans-serif";
+      ctx.fillStyle = textColor;
+      ctx.fillText(centerValText, cx, cy - 9);
+      ctx.font = "600 0.62rem 'Inter', sans-serif";
+      ctx.fillStyle = mutedColor;
+      ctx.fillText(centerUnitText, cx, cy + 11);
+      ctx.restore();
+    }
+  };
+
   chartDonut = new Chart(canvas, {
     type: 'doughnut',
     data: {
@@ -1086,11 +1101,8 @@ function renderDonut() {
         },
       },
     },
+    plugins: [centerPlugin],
   });
-
-  // Center text
-  document.getElementById('donutTotal').textContent = fmtN(totalFact);
-  document.getElementById('donutUnit').textContent  = sfx + ' факт';
 
   // Consumer table
   const tbody = document.getElementById('consumerTableBody');
