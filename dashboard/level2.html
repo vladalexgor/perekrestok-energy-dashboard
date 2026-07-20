@@ -105,13 +105,13 @@
     .tb-sep { width: 1px; height: 24px; background: var(--border); flex-shrink: 0; }
 
     .tb-drill {
-      font-size: 0.76rem; font-weight: 600; color: var(--plan);
+      font-size: 0.74rem; font-weight: 500; color: var(--muted);
       text-decoration: none; flex-shrink: 0;
-      padding: 0.28rem 0.7rem; border: 1px solid var(--plan-soft);
-      border-radius: 6px; background: var(--plan-soft);
+      padding: 0.28rem 0.6rem; border: 1px solid var(--border);
+      border-radius: 6px; background: transparent;
       transition: all 0.15s; white-space: nowrap;
     }
-    .tb-drill:hover { background: var(--plan); color: #fff; }
+    .tb-drill:hover { color: var(--plan); border-color: var(--plan); }
 
     .tb-store { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
     .tb-store-name { font-size: 0.86rem; font-weight: 700; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -545,6 +545,65 @@
     </div>
   </div>
 
+  <!-- ── ACTIONS ────────────────────────────────────────────── -->
+  <div class="panel" style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:0;">
+    <div>
+      <div style="font-size:0.9rem;font-weight:700;">Следующий шаг</div>
+      <div style="font-size:0.72rem;color:var(--muted);margin-top:0.25rem;">Передайте детализацию инженеру или сформируйте отчёт для руководства</div>
+    </div>
+    <div style="display:flex;gap:0.65rem;flex-wrap:wrap;align-items:center;">
+      <a id="level3BtnMain" href="level3.html"
+         style="display:inline-flex;align-items:center;gap:0.4rem;font-family:inherit;font-size:0.78rem;font-weight:600;
+                color:var(--plan);text-decoration:none;padding:0.45rem 1rem;
+                border:1px solid var(--plan-soft);border-radius:8px;background:var(--plan-soft);
+                transition:all 0.15s;white-space:nowrap;"
+         onmouseover="this.style.background='var(--plan)';this.style.color='#fff'"
+         onmouseout="this.style.background='var(--plan-soft)';this.style.color='var(--plan)'">
+        Почасовая детализация →
+      </a>
+      <button onclick="window.print()"
+         style="display:inline-flex;align-items:center;gap:0.4rem;font-family:inherit;font-size:0.78rem;font-weight:600;
+                color:var(--text);padding:0.45rem 1rem;
+                border:1px solid var(--border);border-radius:8px;background:var(--surface-2);
+                cursor:pointer;transition:all 0.15s;white-space:nowrap;">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 10v3h10v-3M8 2v7M5 6l3 3 3-3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Скачать отчёт
+      </button>
+      <button onclick="showTaskModal()"
+         style="display:inline-flex;align-items:center;gap:0.4rem;font-family:inherit;font-size:0.78rem;font-weight:600;
+                color:#fff;padding:0.45rem 1rem;
+                border:none;border-radius:8px;background:var(--negative);
+                cursor:pointer;transition:opacity 0.15s;white-space:nowrap;"
+         onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+        Создать задачу инженеру
+      </button>
+    </div>
+  </div>
+
+  <!-- Task modal -->
+  <div id="taskModal" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;">
+    <div style="background:var(--surface);border-radius:16px;padding:2rem;max-width:420px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+      <div style="font-size:1rem;font-weight:700;margin-bottom:0.5rem;">Задача для инженера</div>
+      <div style="font-size:0.78rem;color:var(--muted);margin-bottom:1.25rem;">Будет передана <span id="taskStoreName" style="font-weight:600;color:var(--text)"></span> → Александр (дивизиональный инженер)</div>
+      <textarea id="taskText" rows="4"
+        style="width:100%;font-family:inherit;font-size:0.82rem;padding:0.75rem;
+               border:1px solid var(--border);border-radius:8px;background:var(--surface-2);
+               color:var(--text);resize:vertical;outline:none;"
+        placeholder="Описание задачи..."></textarea>
+      <div style="display:flex;gap:0.65rem;margin-top:1rem;justify-content:flex-end;">
+        <button onclick="closeTaskModal()"
+          style="font-family:inherit;font-size:0.78rem;font-weight:600;padding:0.5rem 1rem;
+                 border:1px solid var(--border);border-radius:8px;background:transparent;
+                 color:var(--muted);cursor:pointer;">Отмена</button>
+        <button onclick="submitTask()"
+          style="font-family:inherit;font-size:0.78rem;font-weight:600;padding:0.5rem 1rem;
+                 border:none;border-radius:8px;background:var(--negative);
+                 color:#fff;cursor:pointer;">Создать задачу</button>
+      </div>
+    </div>
+  </div>
+
 </main>
 
 <footer>
@@ -696,6 +755,8 @@ function initStore() {
 
   document.title = `${STORE.name} · Цифровой двойник`;
   document.getElementById('drillLink').href = `level3.html?id=${STORE.id}`;
+  document.getElementById('level3BtnMain').href = `level3.html?id=${STORE.id}`;
+  document.getElementById('taskStoreName').textContent = STORE.name;
   document.getElementById('bcStoreName').textContent = STORE.name;
   document.getElementById('tbStoreName').textContent      = STORE.name;
   document.getElementById('tbStoreSub').textContent       = sub;
@@ -1049,6 +1110,27 @@ function renderEui() {
       },
     },
   });
+}
+
+/* ── Task modal ─────────────────────────────────────────────── */
+function showTaskModal() {
+  const modal = document.getElementById('taskModal');
+  modal.style.display = 'flex';
+  // prefill with context
+  const over = STORE.delta > 0;
+  const absDelta = Math.abs(STORE.delta).toFixed(1);
+  document.getElementById('taskText').value =
+    over
+      ? `Объект: ${STORE.name}\nОтклонение: +${absDelta}% (перерасход)\n\nПроверить состояние HVAC-систем и вентиляционных установок. Запросить у FreeTech детализацию по режимам работы оборудования.`
+      : `Объект: ${STORE.name}\nОтклонение: −${absDelta}% (экономия)\n\nПроверить, не связана ли экономия с отключением оборудования. Убедиться в соответствии микроклимата нормативам.`;
+}
+function closeTaskModal() {
+  document.getElementById('taskModal').style.display = 'none';
+}
+function submitTask() {
+  closeTaskModal();
+  // In production: POST to task management system
+  alert(`Задача создана для объекта "${STORE.name}" и передана инженеру.`);
 }
 </script>
 </body>

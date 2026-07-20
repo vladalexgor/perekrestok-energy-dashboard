@@ -279,7 +279,7 @@
     input.ctrl-inp::placeholder { color: var(--muted); }
 
     /* ── STORE GRID ───────────────────────────────────────────── */
-    .store-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .store-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
 
     /* ── STORE CARD ───────────────────────────────────────────── */
     .store-card {
@@ -288,9 +288,9 @@
       border: 1px solid var(--border);
       border-left: 4px solid var(--positive);
       box-shadow: var(--shadow);
-      padding: 1.05rem 1.1rem 0.95rem;
+      padding: 0.85rem 1rem 0.8rem;
       cursor: pointer;
-      display: flex; flex-direction: column; gap: 0.7rem;
+      display: flex; flex-direction: column; gap: 0.55rem;
       animation: fadeUp 0.35s ease both;
       transition: transform 0.18s ease, box-shadow 0.18s ease;
     }
@@ -428,6 +428,13 @@
     <button class="btn-grp-btn active" data-unit="rub" onclick="setUnit('rub')">₽</button>
     <button class="btn-grp-btn"        data-unit="kwh" onclick="setUnit('kwh')">кВт·ч</button>
   </div>
+
+  <!-- Export -->
+  <button class="theme-toggle" id="exportBtn" title="Скачать отчёт" onclick="window.print()">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M3 10v3h10v-3M8 2v7M5 6l3 3 3-3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
 
   <!-- Theme toggle — как в Галсе -->
   <button class="theme-toggle" id="themeToggle" title="Переключить тему">
