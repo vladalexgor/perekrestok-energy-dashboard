@@ -304,7 +304,6 @@
       grid-template-columns: 54px repeat(24, 1fr);
       gap: 3px;
       min-width: 640px;
-      padding-bottom: 36px; /* space for tooltip below last row */
     }
     .hm-hour-label {
       font-size: 0.58rem; color: var(--muted); text-align: center;
@@ -319,17 +318,20 @@
     .hm-cell {
       height: 32px; border-radius: 4px;
       transition: transform 0.1s;
-      cursor: default; position: relative;
+      cursor: default;
     }
-    .hm-cell:hover { transform: scale(1.1); z-index: 10; }
-    .hm-cell[data-tip]:hover::after {
-      content: attr(data-tip);
-      position: absolute; top: calc(100% + 4px); left: 50%;
-      transform: translateX(-50%);
+    .hm-cell:hover { transform: scale(1.1); }
+
+    /* JS-driven tooltip — position: fixed escapes any overflow container */
+    #hmTip {
+      position: fixed;
       background: var(--surface-3); color: var(--text);
       font-size: 0.65rem; font-weight: 600; white-space: nowrap;
-      padding: 3px 7px; border-radius: 5px;
-      border: 1px solid var(--border); pointer-events: none; z-index: 20;
+      padding: 4px 8px; border-radius: 5px;
+      border: 1px solid var(--border);
+      pointer-events: none; z-index: 9999;
+      display: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
 
     /* Heatmap color scale legend */
@@ -1063,7 +1065,7 @@ function renderDonut() {
     },
     options: {
       responsive: true, maintainAspectRatio: false,
-      layout: { padding: 12 },
+      layout: { padding: 30 },
       cutout: '68%',
       plugins: {
         legend: { display: false },
@@ -1158,11 +1160,32 @@ function renderHeatmap() {
       const cell = document.createElement('div');
       cell.className = 'hm-cell';
       cell.style.background = heatColor(diffPct);
-      cell.dataset.tip = `${String(h).padStart(2,'0')}:00  ${diffPct >= 0 ? '+' : ''}${diffPct.toFixed(1)}%`;
+      const tipText = `${String(h).padStart(2,'0')}:00  ${diffPct >= 0 ? '+' : ''}${diffPct.toFixed(1)}%`;
+      cell.addEventListener('mouseenter', e => showHmTip(e, tipText));
+      cell.addEventListener('mousemove',  e => moveHmTip(e));
+      cell.addEventListener('mouseleave', hideHmTip);
       grid.appendChild(cell);
     }
   }
 }
+
+/* ── Тултип тепловой карты (position:fixed, не зависит от overflow) ── */
+const hmTip = document.getElementById('hmTip');
+function showHmTip(e, text) {
+  hmTip.textContent = text;
+  hmTip.style.display = 'block';
+  moveHmTip(e);
+}
+function moveHmTip(e) {
+  const gap = 12;
+  let x = e.clientX + gap;
+  let y = e.clientY - hmTip.offsetHeight - gap;
+  if (x + hmTip.offsetWidth > window.innerWidth - 8) x = e.clientX - hmTip.offsetWidth - gap;
+  if (y < 8) y = e.clientY + gap;
+  hmTip.style.left = x + 'px';
+  hmTip.style.top  = y + 'px';
+}
+function hideHmTip() { hmTip.style.display = 'none'; }
 
 /* ── Цвет ячейки тепловой карты ─────────────────────────────── */
 function heatColor(pct) {
@@ -1211,6 +1234,8 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('dateNext').addEventListener('click', () => shiftDate(+1));
 });
 </script>
+
+<div id="hmTip"></div>
 
 <!-- ── FOOTER ───────────────────────────────────────────────── -->
 <footer class="site-footer">
