@@ -739,8 +739,10 @@ function updateColors() {
   C.negative    = dark ? '#D4645C' : '#dc2626';
   C.grid        = dark ? 'rgba(255,255,255,0.05)' : 'rgba(17,24,39,0.07)';
   C.tick        = dark ? 'rgba(255,255,255,0.40)' : 'rgba(17,24,39,0.50)';
-  C.tooltip     = dark ? '#232D3F' : '#ffffff';
-  C.tooltipBdr  = dark ? 'rgba(255,255,255,0.10)' : 'rgba(17,24,39,0.12)';
+  C.tooltip    = 'rgba(15,23,42,0.93)';
+  C.tooltipBdr = 'rgba(255,255,255,0.12)';
+  C.tipTitle   = '#ffffff';
+  C.tipBody    = 'rgba(255,255,255,0.80)';
 
   Chart.defaults.color = C.tick;
   Chart.defaults.font.family = "'Inter', sans-serif";
@@ -970,8 +972,8 @@ function renderFvp() {
           borderColor: C.tooltipBdr,
           borderWidth: 1,
           padding: 10,
-          titleColor: document.documentElement.getAttribute('data-theme') === 'dark' ? '#fff' : '#111827',
-          bodyColor:  document.documentElement.getAttribute('data-theme') === 'dark' ? 'rgba(255,255,255,0.75)' : '#374151',
+          titleColor: C.tipTitle,
+          bodyColor:  C.tipBody,
           callbacks: {
             label: ctx => {
               const val = ctx.raw;
@@ -1052,8 +1054,8 @@ function renderDev() {
           borderColor: C.tooltipBdr,
           borderWidth: 1,
           padding: 10,
-          titleColor: document.documentElement.getAttribute('data-theme') === 'dark' ? '#fff' : '#111827',
-          bodyColor:  document.documentElement.getAttribute('data-theme') === 'dark' ? 'rgba(255,255,255,0.75)' : '#374151',
+          titleColor: C.tipTitle,
+          bodyColor:  C.tipBody,
           callbacks: {
             label: ctx => {
               if (ctx.raw === null) return '  Нет данных';
@@ -1133,8 +1135,8 @@ function renderEui() {
           borderColor: C.tooltipBdr,
           borderWidth: 1,
           padding: 10,
-          titleColor: document.documentElement.getAttribute('data-theme') === 'dark' ? '#fff' : '#111827',
-          bodyColor:  document.documentElement.getAttribute('data-theme') === 'dark' ? 'rgba(255,255,255,0.75)' : '#374151',
+          titleColor: C.tipTitle,
+          bodyColor:  C.tipBody,
           callbacks: {
             label: ctx => `  ${ctx.raw} кВт·ч/м²/год`,
           },

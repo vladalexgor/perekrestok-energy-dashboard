@@ -618,6 +618,8 @@
   Перекрёсток · Цифровой энергетический двойник · Пилотная версия 2026
 </footer>
 
+<div id="hmTip"></div>
+
 <!-- ════════════════════════════════════════════════════════════
      SCRIPT
 ════════════════════════════════════════════════════════════ -->
@@ -698,8 +700,10 @@ function updateColors() {
   C.plan      = dark ? '#6B9FD4' : '#4a7fbc';
   C.grid      = dark ? 'rgba(255,255,255,0.05)' : 'rgba(17,24,39,0.07)';
   C.tick      = dark ? 'rgba(255,255,255,0.40)' : 'rgba(17,24,39,0.50)';
-  C.tooltip   = dark ? '#232D3F' : '#ffffff';
-  C.tooltipBdr = dark ? 'rgba(255,255,255,0.10)' : 'rgba(17,24,39,0.12)';
+  C.tooltip    = 'rgba(15,23,42,0.93)';
+  C.tooltipBdr = 'rgba(255,255,255,0.12)';
+  C.tipTitle   = '#ffffff';
+  C.tipBody    = 'rgba(255,255,255,0.80)';
   Chart.defaults.color = C.tick;
   Chart.defaults.font.family = "'Inter', sans-serif";
   Chart.defaults.font.size   = 12;
@@ -974,8 +978,8 @@ function renderHourly() {
           backgroundColor: C.tooltip,
           borderColor: C.tooltipBdr, borderWidth: 1,
           padding: 10,
-          titleColor: document.documentElement.getAttribute('data-theme') === 'dark' ? '#fff' : '#111827',
-          bodyColor:  document.documentElement.getAttribute('data-theme') === 'dark' ? 'rgba(255,255,255,0.75)' : '#374151',
+          titleColor: C.tipTitle,
+          bodyColor:  C.tipBody,
           callbacks: {
             label: ctx => {
               const val = ctx.raw;
@@ -1071,8 +1075,8 @@ function renderDonut() {
         legend: { display: false },
         tooltip: {
           backgroundColor: C.tooltip, borderColor: C.tooltipBdr, borderWidth: 1, padding: 10,
-          titleColor: document.documentElement.getAttribute('data-theme') === 'dark' ? '#fff' : '#111827',
-          bodyColor:  document.documentElement.getAttribute('data-theme') === 'dark' ? 'rgba(255,255,255,0.75)' : '#374151',
+          titleColor: C.tipTitle,
+          bodyColor:  C.tipBody,
           callbacks: {
             label: ctx => {
               const pct = (ctx.raw / totalFact * 100).toFixed(1);
@@ -1234,8 +1238,6 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('dateNext').addEventListener('click', () => shiftDate(+1));
 });
 </script>
-
-<div id="hmTip"></div>
 
 <!-- ── FOOTER ───────────────────────────────────────────────── -->
 <footer class="site-footer">
