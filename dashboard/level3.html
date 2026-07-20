@@ -288,12 +288,23 @@
     .badge-pos { background: var(--pos-soft); color: var(--pos-text); }
 
     /* ── HEATMAP ─────────────────────────────────────────────── */
-    .heatmap-wrap { overflow-x: auto; }
+    .heatmap-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      position: relative;
+    }
+    .heatmap-scroll-hint {
+      display: none;
+      font-size: 0.68rem; color: var(--muted);
+      text-align: center; margin-bottom: 0.5rem;
+      letter-spacing: 0.02em;
+    }
     .heatmap-grid {
       display: grid;
       grid-template-columns: 54px repeat(24, 1fr);
       gap: 3px;
       min-width: 640px;
+      padding-bottom: 36px; /* space for tooltip below last row */
     }
     .hm-hour-label {
       font-size: 0.58rem; color: var(--muted); text-align: center;
@@ -310,10 +321,10 @@
       transition: transform 0.1s;
       cursor: default; position: relative;
     }
-    .hm-cell:hover { transform: scale(1.15); z-index: 10; }
+    .hm-cell:hover { transform: scale(1.1); z-index: 10; }
     .hm-cell[data-tip]:hover::after {
       content: attr(data-tip);
-      position: absolute; bottom: calc(100% + 5px); left: 50%;
+      position: absolute; top: calc(100% + 4px); left: 50%;
       transform: translateX(-50%);
       background: var(--surface-3); color: var(--text);
       font-size: 0.65rem; font-weight: 600; white-space: nowrap;
@@ -324,11 +335,19 @@
     /* Heatmap color scale legend */
     .hm-legend {
       display: flex; align-items: center; gap: 0.6rem;
-      margin-top: 1rem; font-size: 0.68rem; color: var(--muted);
+      margin-top: 0.5rem; font-size: 0.68rem; color: var(--muted);
     }
     .hm-scale {
       width: 160px; height: 10px; border-radius: 5px;
       background: linear-gradient(to right, #059669, #fbbf24, #dc2626);
+    }
+
+    @media (max-width: 680px) {
+      .heatmap-scroll-hint { display: block; }
+      .heatmap-grid { gap: 2px; }
+      .hm-cell { height: 24px; border-radius: 3px; }
+      .hm-day-label { font-size: 0.62rem; }
+      .hm-hour-label { font-size: 0.52rem; }
     }
 
     /* ── FOOTER ──────────────────────────────────────────────── */
@@ -579,6 +598,7 @@
       </div>
     </div>
 
+    <div class="heatmap-scroll-hint">← прокрутите, чтобы увидеть все 24 часа →</div>
     <div class="heatmap-wrap">
       <div class="heatmap-grid" id="heatmapGrid"></div>
     </div>
