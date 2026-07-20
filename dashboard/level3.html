@@ -1049,7 +1049,7 @@ function renderDonut() {
 
   const centerPlugin = {
     id: 'donutCenter',
-    afterDraw(chart) {
+    afterDatasetsDraw(chart) {
       const { ctx, chartArea: { top, bottom, left, right } } = chart;
       const cx = (left + right) / 2;
       const cy = (top + bottom) / 2;
