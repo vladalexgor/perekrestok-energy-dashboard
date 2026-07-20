@@ -74,8 +74,9 @@
     }
     .tb-datazoom {
       position: absolute; left: 50%; transform: translateX(-50%);
-      font-size: 0.8rem; font-weight: 700; letter-spacing: 0.08em;
+      font-size: 1.05rem; font-weight: 800; letter-spacing: 0.1em;
       color: var(--plan); text-transform: uppercase; pointer-events: none;
+      white-space: nowrap;
     }
     .tb-logo {
       width: 34px; height: 34px; background: var(--brand);
@@ -931,6 +932,7 @@ function renderHourly() {
     data: { labels, datasets },
     options: {
       responsive: true, maintainAspectRatio: false,
+      layout: { padding: { top: 20, right: 16 } },
       interaction: { mode: 'index', intersect: false },
       plugins: {
         legend: { display: false },
@@ -1029,6 +1031,7 @@ function renderDonut() {
     },
     options: {
       responsive: true, maintainAspectRatio: false,
+      layout: { padding: 12 },
       cutout: '68%',
       plugins: {
         legend: { display: false },
